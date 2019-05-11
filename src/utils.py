@@ -35,8 +35,8 @@ def slice_column(matrix, col_id):
 
 def plot_single_output(figure_id, X_old, Y_old, X_new, mean, var):
     """Construct plot containing the predictions and observations."""
-    ub = mean + np.sqrt(var)
-    lb = mean - np.sqrt(var)
+    ub = mean + 2 * np.sqrt(var)
+    lb = mean - 2 * np.sqrt(var)
     plt.figure(figure_id)
     plt.plot(X_new, mean)
     plt.scatter(X_old, Y_old, color='b', marker='x')
