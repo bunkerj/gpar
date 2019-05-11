@@ -47,3 +47,7 @@ def plot_single_output(figure_id, X_old, Y_old, X_new, mean, var):
         alpha=0.2,
         edgecolor='b')
     plt.grid(True)
+
+
+def concat_right_column(matrix, col):
+    return np.concatenate((matrix, col), axis=1)
