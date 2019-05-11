@@ -1,6 +1,5 @@
 import GPy
 import numpy as np
-from matplotlib import pyplot as plt
 from utils import should_update_max, slice_column
 
 
