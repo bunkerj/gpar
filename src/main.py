@@ -4,11 +4,13 @@ from utils import *
 from synthetic_data_functions import *
 from matplotlib import pyplot as plt
 from gpar_regressor import GPARRegression
-from evaluation import smse, mse
+from evaluation import mse
+from kernels import *
 
 # Output stream of interest
 OUTPUT_ID = 2
-NUM_RESTARTS = 20
+NUM_RESTARTS = 5
+KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 
 # Construct synthetic observations
 n = 50
@@ -30,14 +32,13 @@ synthetic_functions = (y1, y2, y3)
 Y_ref = np.array(list(map(synthetic_functions[OUTPUT_ID], X_new))).reshape((n_new, 1))
 
 # Get predictions from GPAR
-kernel_function = GPy.kern.RBF
-m = GPARRegression(X, Y, kernel_function, NUM_RESTARTS)
+m = GPARRegression(X, Y, KERNEL_FUNCTION, NUM_RESTARTS)
 means, vars = m.predict(X_new)
 Y_pred_mean = slice_column(means, OUTPUT_ID)
 Y_pred_var = slice_column(vars, OUTPUT_ID)
 
 # Get predictions from single Gaussian
-m_single_gp = GPy.models.GPRegression(X, outputs[OUTPUT_ID], kernel_function(input_dim=1))
+m_single_gp = GPy.models.GPRegression(X, outputs[OUTPUT_ID], GPy.kern.RBF(input_dim=1))
 m_single_gp.optimize_restarts(NUM_RESTARTS, verbose=False)
 Y_pred_single_gp_mean, Y_pred_single_gp_var = m_single_gp.predict(X_new)
 

@@ -9,7 +9,7 @@ class GPARRegression:
         self.Y = Y
         self.X = X
         self.n = X.shape[0]
-        self.kernel_function = kernel_function
+        self._get_kernel = kernel_function
         self.num_restarts = num_restarts
 
         models, ordering = self._get_gp_models_with_ordering()
@@ -52,12 +52,13 @@ class GPARRegression:
 
     def _get_trained_gp_model(self, current_X, out_id):
         y = slice_column(self.Y, out_id)
-        kernel = self.kernel_function(input_dim=current_X.shape[1])
+        kernel = self._get_kernel(self.X, current_X)
         m = GPy.models.GPRegression(current_X, y, kernel)
-        m.optimize_restarts(self.num_restarts, verbose=False)
+        m.optimize_restarts(self.num_restarts, verbose=True)
         return m
 
     def stack_in_order(self, data_dict):
+        """Stack data according to the order defined in dictionary keys."""
         result = None
         for id in range(len(data_dict)):
             data = data_dict[id]
