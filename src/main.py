@@ -13,7 +13,7 @@ NUM_RESTARTS = 5
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 
 # Construct synthetic observations
-n = 50
+n = 30
 X = np.linspace(0, 1, n).reshape((n, 1))
 
 Y3 = create_synthetic_output(y3_noisy, X)
@@ -32,7 +32,7 @@ synthetic_functions = (y1, y2, y3)
 Y_ref = np.array(list(map(synthetic_functions[OUTPUT_ID], X_new))).reshape((n_new, 1))
 
 # Get predictions from GPAR
-m = GPARRegression(X, Y, KERNEL_FUNCTION, NUM_RESTARTS)
+m = GPARRegression(X, Y, KERNEL_FUNCTION, num_restarts=NUM_RESTARTS)
 means, vars = m.predict(X_new)
 Y_pred_mean = slice_column(means, OUTPUT_ID)
 Y_pred_var = slice_column(vars, OUTPUT_ID)
