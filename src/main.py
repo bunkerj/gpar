@@ -31,5 +31,5 @@ gpar_model = GPARRegression(X, Y, KERNEL_FUNCTION, num_restarts=NUM_RESTARTS)
 # Display results
 visualiser = Visualiser(gpar_model, X, Y, X_new, Y_true)
 visualiser.plot_mse_values(0)
-# visualiser.plot_all_outputs(1)
+visualiser.plot_all_outputs(1)
 plt.show()

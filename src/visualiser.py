@@ -70,7 +70,7 @@ class Visualiser:
     def plot_all_outputs(self, figure_id_start=0):
         """Plot all GPAR outputs against: observations, igp, truth."""
         for out_id in range(self.output_dim):
-            plt.figure((figure_id_start + out_id) // NUM_SUBPLOTS)
+            plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
             self._specify_subplot(out_id)
             self._plot_observations(out_id)
             self._plot_single_output(out_id, self.gpar_means, self.gpar_vars, 'GPAR', True)
@@ -86,7 +86,7 @@ class Visualiser:
 
     def plot_mse_values(self, figure_id_start=0):
         for out_id in range(self.output_dim):
-            plt.figure((figure_id_start + out_id) // NUM_SUBPLOTS)
+            plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
             self._specify_subplot(out_id)
             single_gpar_means = slice_column(self.gpar_means, out_id)
             single_igp_means = slice_column(self.igp_means, out_id)
