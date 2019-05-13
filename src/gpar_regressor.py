@@ -28,10 +28,14 @@ class GPARRegression:
             print('Done.')
             return models, manual_ordering
 
+    def _print_iteration(self, curr_iter, total_iter_count):
+        print('Iteration {}/{}...'.format(curr_iter, total_iter_count))
+
     def _get_gp_models(self, manual_ordering):
         models = []
         current_X = self.X
-        for out_id in manual_ordering:
+        for iter, out_id in enumerate(manual_ordering):
+            self._print_iteration(iter + 1, len(manual_ordering))
             m = self._get_trained_gp_model(current_X, out_id)
             models.append(m)
             current_X = self._augment_X(current_X, out_id)
@@ -47,7 +51,8 @@ class GPARRegression:
         current_X = self.X
         output_count = self.Y.shape[1]
         remaining_output_ids = list(range(output_count))
-        for _ in range(output_count):
+        for iter in range(output_count):
+            self._print_iteration(iter + 1, output_count)
             max_log_likelihood_model, max_log_likelihood_id = \
                 self._get_max_log_likelihood_models(current_X, remaining_output_ids)
             models.append(max_log_likelihood_model)
