@@ -10,8 +10,8 @@ from kernels import *
 np.random.seed(17)
 
 # Output stream of interest
-NUM_RESTARTS = 100
-KERNEL_FUNCTION = get_linear_input_dependent_kernel
+NUM_RESTARTS = 5
+KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 
 # Construct synthetic observations
 n = 50
