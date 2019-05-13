@@ -21,11 +21,11 @@ class Visualiser:
         self.gpar_means = means
         self.gpar_vars = variances
 
-        means, variances = self.get_igp_predictions()
+        means, variances = self._get_igp_predictions()
         self.igp_means = means
         self.igp_vars = variances
 
-    def get_igp_predictions(self):
+    def _get_igp_predictions(self):
         stacked_means = None
         stacked_vars = None
         for out_id in range(self.output_dim):
@@ -41,17 +41,7 @@ class Visualiser:
         m.optimize_restarts(self.num_restarts, verbose=False)
         return m.predict(self.X_new)
 
-    def print_mse_values(self):
-        for out_id in range(self.output_dim):
-            single_gpar_means = slice_column(self.gpar_means, out_id)
-            single_igp_means = slice_column(self.igp_means, out_id)
-            true_means = slice_column(self.Y_true, out_id)
-            print('\nGPAR MSE for output {}: {}'.format(
-                out_id + 1, mse(true_means, single_gpar_means)))
-            print('Single GP MSE for output {}: {}'.format(
-                out_id + 1, mse(true_means, single_igp_means)))
-
-    def specify_subplot(self, out_id):
+    def _specify_subplot(self, out_id):
         return plt.subplot(1, NUM_SUBPLOTS, (out_id % NUM_SUBPLOTS) + 1)
 
     def _plot_observations(self, out_id):
@@ -77,11 +67,11 @@ class Visualiser:
         single_Y = slice_column(self.Y_true, out_id)
         plt.plot(self.X_new, single_Y, label='Truth')
 
-    def plot_all_outputs(self):
+    def plot_all_outputs(self, figure_id_start=0):
         """Plot all GPAR outputs against: observations, igp, truth."""
         for out_id in range(self.output_dim):
-            plt.figure(out_id // NUM_SUBPLOTS)
-            self.specify_subplot(out_id)
+            plt.figure((figure_id_start + out_id) // NUM_SUBPLOTS)
+            self._specify_subplot(out_id)
             self._plot_observations(out_id)
             self._plot_single_output(out_id, self.gpar_means, self.gpar_vars, 'GPAR', True)
             self._plot_single_output(out_id, self.igp_means, self.igp_vars, 'IGP', False)
@@ -90,3 +80,18 @@ class Visualiser:
                 plt.legend(loc='upper left')
             plt.title('Y{}'.format(out_id + 1))
             plt.grid(True)
+
+    def _plot_bar_plot(self, values, labels):
+        plt.bar(range(len(values)), values, tick_label=labels)
+
+    def plot_mse_values(self, figure_id_start=0):
+        for out_id in range(self.output_dim):
+            plt.figure((figure_id_start + out_id) // NUM_SUBPLOTS)
+            self._specify_subplot(out_id)
+            single_gpar_means = slice_column(self.gpar_means, out_id)
+            single_igp_means = slice_column(self.igp_means, out_id)
+            true_means = slice_column(self.Y_true, out_id)
+            gpar_mse = mse(true_means, single_gpar_means)
+            igp_mse = mse(true_means, single_igp_means)
+            self._plot_bar_plot([gpar_mse, igp_mse], ['GPAR', 'IGP'])
+            plt.title('Y{} MSE'.format(out_id + 1))

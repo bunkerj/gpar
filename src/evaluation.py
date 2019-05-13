@@ -13,7 +13,7 @@ def smse(series1, series2):
     for idx in range(n):
         e = series1[idx] - series2[idx]
         error_acc += np.sign(e) * (e ** 2)
-    return error_acc / n
+    return float(error_acc / n)
 
 
 def mse(series1, series2):
@@ -23,4 +23,4 @@ def mse(series1, series2):
     for idx in range(n):
         e = series1[idx] - series2[idx]
         error_acc += (e ** 2)
-    return error_acc / n
+    return float(error_acc / n)
