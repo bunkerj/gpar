@@ -9,17 +9,15 @@ NUM_SUBPLOTS = 3
 
 
 class Visualiser:
-    def __init__(self, gpar_model, X_obs, Y_obs, X_new, Y_true):
+    def __init__(self, model_means, model_variances, X_obs, Y_obs, X_new, Y_true):
         self.X_obs = X_obs
         self.Y_obs = Y_obs
         self.X_new = X_new
         self.Y_true = Y_true
         self.output_dim = Y_obs.shape[1]
         self.num_restarts = 10
-
-        means, variances = gpar_model.predict(X_new)
-        self.gpar_means = means
-        self.gpar_vars = variances
+        self.model_means = model_means
+        self.model_variances = model_variances
 
         means, variances = self._get_igp_predictions()
         self.igp_means = means
@@ -73,7 +71,7 @@ class Visualiser:
             plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
             self._specify_subplot(out_id)
             self._plot_observations(out_id)
-            self._plot_single_output(out_id, self.gpar_means, self.gpar_vars, 'GPAR', True)
+            self._plot_single_output(out_id, self.model_means, self.model_variances, 'GPAR', True)
             self._plot_single_output(out_id, self.igp_means, self.igp_vars, 'IGP', False)
             self._plot_truth(out_id)
             if (out_id + 1) % NUM_SUBPLOTS == 0:
@@ -88,7 +86,7 @@ class Visualiser:
         for out_id in range(self.output_dim):
             plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
             self._specify_subplot(out_id)
-            single_gpar_means = slice_column(self.gpar_means, out_id)
+            single_gpar_means = slice_column(self.model_means, out_id)
             single_igp_means = slice_column(self.igp_means, out_id)
             true_means = slice_column(self.Y_true, out_id)
             gpar_mse = mse(true_means, single_gpar_means)
