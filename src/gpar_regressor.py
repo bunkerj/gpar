@@ -85,7 +85,7 @@ class GPARRegression:
             if result is None:
                 result = data
             else:
-                result = np.concatenate((result, data), axis=1)
+                result = concat_right_column(result, data)
         return result
 
     def predict(self, X_new):
