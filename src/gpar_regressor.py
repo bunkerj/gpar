@@ -18,10 +18,14 @@ class GPARRegression:
         self.ordering = ordering
 
     def _get_models_and_ordering(self, manual_ordering):
+        print('Training GPAR model...')
         if manual_ordering is None:
-            return self._get_gp_models_with_ordering()
+            results = self._get_gp_models_with_ordering()
+            print('Done.')
+            return results
         else:
             models = self._get_gp_models(manual_ordering)
+            print('Done.')
             return models, manual_ordering
 
     def _get_gp_models(self, manual_ordering):
@@ -74,7 +78,7 @@ class GPARRegression:
         y = slice_column(self.Y, out_id)
         kernel = self._get_kernel(self.X, current_X)
         m = GPy.models.GPRegression(current_X, y, kernel)
-        m.optimize_restarts(self.num_restarts, verbose=True)
+        m.optimize_restarts(self.num_restarts, verbose=False)
         return m
 
     def _stack_in_order(self, data_dict):

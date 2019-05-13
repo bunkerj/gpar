@@ -3,6 +3,7 @@ import numpy as np
 from evaluation import mse
 from matplotlib import pyplot as plt
 from utils import slice_column, concat_right_column
+from kernels import get_linear_input_dependent_kernel
 
 
 class Visualiser:
@@ -33,7 +34,8 @@ class Visualiser:
 
     def _get_single_igp_prediction(self, out_id):
         single_Y = slice_column(self.Y_obs, out_id)
-        m = GPy.models.GPRegression(self.X_obs, single_Y, GPy.kern.RBF(input_dim=1))
+        kernel = get_linear_input_dependent_kernel(self.X_obs, self.X_obs)
+        m = GPy.models.GPRegression(self.X_obs, single_Y, kernel)
         m.optimize_restarts(self.num_restarts, verbose=False)
         return m.predict(self.X_new)
 
@@ -42,10 +44,10 @@ class Visualiser:
             single_gpar_means = slice_column(self.gpar_means, out_id)
             single_igp_means = slice_column(self.igp_means, out_id)
             true_means = slice_column(self.Y_true, out_id)
-            print('GPAR MSE for output {}: {}'.format(
-                out_id, mse(true_means, single_gpar_means)))
-            print('Single GP MSE for output {}: {}\n'.format(
-                out_id, mse(true_means, single_igp_means)))
+            print('\nGPAR MSE for output {}: {}'.format(
+                out_id + 1, mse(true_means, single_gpar_means)))
+            print('Single GP MSE for output {}: {}'.format(
+                out_id + 1, mse(true_means, single_igp_means)))
 
     def _plot_observations(self, out_id):
         plt.figure(out_id)
@@ -81,5 +83,5 @@ class Visualiser:
             self._plot_single_output(out_id, self.igp_means, self.igp_vars, 'IGP', display_var=False)
             self._plot_truth(out_id)
             plt.legend(loc='upper left')
-            plt.title('Y{}'.format(out_id))
+            plt.title('Y{}'.format(out_id + 1))
             plt.grid(True)
