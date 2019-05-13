@@ -16,8 +16,8 @@ KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 # Construct synthetic observations
 n = 50
 X = np.linspace(0, 1, n).reshape((n, 1))
-noisy_functions = (y1_noisy, y2_noisy, y3_noisy)
-Y = map_and_stack_outputs(noisy_functions, X)
+noisy_synthetic_functions = (y1_noisy, y2_noisy, y3_noisy)
+Y = map_and_stack_outputs(noisy_synthetic_functions, X)
 
 # Construct true outputs
 n_new = 1000
@@ -27,6 +27,7 @@ Y_true = map_and_stack_outputs(synthetic_functions, X_new)
 
 # Get predictions from GPAR
 gpar_model = GPARRegression(X, Y, KERNEL_FUNCTION, num_restarts=NUM_RESTARTS)
+gpar_model.print_ordering()
 
 # Display results
 visualiser = Visualiser(gpar_model, X, Y, X_new, Y_true)

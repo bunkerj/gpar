@@ -17,6 +17,10 @@ class GPARRegression:
         self.gaussian_process_dict = dict(zip(ordering, models))
         self.ordering = ordering
 
+    def print_ordering(self):
+        ordering_string = ', '.join('Y{}'.format(out_id + 1) for out_id in self.ordering)
+        print('\nOutput ordering: {}'.format(ordering_string))
+
     def _get_models_and_ordering(self, manual_ordering):
         print('Training GPAR model...')
         if manual_ordering is None:
