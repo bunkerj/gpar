@@ -24,6 +24,13 @@ def map_to_col_vector(f, X):
     return np.array(list(map(f, X))).reshape((X.shape[0], 1))
 
 
+def stack_all_columns(columns):
+    full_stack = None
+    for column in columns:
+        full_stack = concat_right_column(full_stack, column)
+    return full_stack
+
+
 def map_and_stack_outputs(funcs, X):
     Y = None
     for f in funcs:
