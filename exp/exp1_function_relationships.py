@@ -8,7 +8,6 @@ from synthetic_data_functions import synthetic_functions, noisy_synthetic_functi
 
 np.random.seed(17)
 
-# Output stream of interest
 NUM_RESTARTS = 5
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 

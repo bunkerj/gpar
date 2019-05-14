@@ -1,5 +1,7 @@
 import numpy as np
-from math import sin, cos, pi, exp, sqrt
+from numpy import sin, cos, pi, exp, sqrt
+
+# ------------------------------ exp 1 ------------------------------ #
 
 NOISE_VAR = 0.05
 
@@ -24,6 +26,17 @@ def y3_exp1(x):
     return y2_exp1(x) * (y1_exp1(x) ** 2) + 3 * x
 
 
+y1_exp1_noisy = add_noise(y1_exp1)
+y2_exp1_noisy = add_noise(y2_exp1)
+y3_exp1_noisy = add_noise(y3_exp1)
+
+synthetic_functions = (y1_exp1, y2_exp1, y3_exp1)
+noisy_synthetic_functions = (y1_exp1_noisy, y2_exp1_noisy, y3_exp1_noisy)
+
+
+# ------------------------------ exp 2 ------------------------------ #
+
+
 def f1_exp2(x):
     return -sin(10 * pi * (x + 1)) / (2 * x + 1) - x ** 4
 
@@ -38,51 +51,25 @@ def f2_exp2(x):
            sqrt(2 * x)
 
 
-def y_exp2(noise_func, x):
-    n = len(x)
+def get_noise_matrix(n):
     eps1_values = np.random.normal(0, 0.1, size=(n, 1))
-    eps2_values = np.random.normal(0, 0.1, size=(n, 1))
-    Y = np.zeros((n, 2))
+    eps2_values = np.random.normal(0, 0.04, size=(n, 1))
+    return np.concatenate((eps1_values, eps2_values), axis=1)
+
+
+def y_exp2_clean(X, is_noisy):
+    n = len(X)
+    Y = np.zeros((n, 4))
+    noise_matrix = get_noise_matrix(n) if is_noisy else None
     for idx in range(n):
-        curr_x = x[idx]
-        Y[idx, 0] = f1_exp2(curr_x) + eps1_values[idx]
-        Y[idx, 1] = noise_func(curr_x, eps1_values[idx], eps2_values[idx])
+        Y[idx, 0] = f1_exp2(X[idx])
+        Y[idx, 0] = f2_exp2(X[idx])
+        Y[idx, 0] = f2_exp2(X[idx])
+        Y[idx, 0] = f2_exp2(X[idx])
+        if is_noisy:
+            Y[idx, 0] += noise_matrix[idx, 0]
+            Y[idx, 1] += (np.sin(2 * np.pi * X[idx]) ** 2) * noise_matrix[idx, 0] + \
+                         (np.cos(2 * np.pi * X[idx]) ** 2) * noise_matrix[idx, 1]
+            Y[idx, 2] += np.sin(2 * np.pi * noise_matrix[idx, 0]) + noise_matrix[idx, 1]
+            Y[idx, 3] += np.sin(2 * np.pi * X[idx]) * noise_matrix[idx, 0] + noise_matrix[idx, 1]
     return Y
-
-
-def scheme1_noise_component(curr_x, eps1, eps2):
-    return f2_exp2(curr_x) + \
-           (sin(2 * pi * curr_x) ** 2) * eps1 + \
-           (cos(2 * pi * curr_x) ** 2) * eps2
-
-
-def scheme2_noise_component(curr_x, eps1, eps2):
-    return f2_exp2(curr_x) + \
-           sin(pi * eps1) + \
-           eps2
-
-
-def scheme3_noise_component(curr_x, eps1, eps2):
-    return f2_exp2(curr_x) + \
-           sin(pi * curr_x) * eps1 + \
-           eps2
-
-
-def y_scheme1_exp2(x):
-    return y_exp2(scheme1_noise_component, x)
-
-
-def y_scheme2_exp2(x):
-    return y_exp2(scheme2_noise_component, x)
-
-
-def y_scheme3_exp2(x):
-    return y_exp2(scheme3_noise_component, x)
-
-
-y1_exp1_noisy = add_noise(y1_exp1)
-y2_exp1_noisy = add_noise(y2_exp1)
-y3_exp1_noisy = add_noise(y3_exp1)
-
-synthetic_functions = (y1_exp1, y2_exp1, y3_exp1)
-noisy_synthetic_functions = (y1_exp1_noisy, y2_exp1_noisy, y3_exp1_noisy)
