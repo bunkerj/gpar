@@ -1,8 +1,8 @@
 import numpy as np
-from utils import map_and_stack_outputs
+from src_utils import map_and_stack_outputs
 from matplotlib import pyplot as plt
 from gpar_regressor import GPARRegression
-from visualiser import Visualiser
+from utils import Visualiser
 from kernels import get_non_linear_input_dependent_kernel
 from synthetic_data_functions import synthetic_functions, noisy_synthetic_functions
 

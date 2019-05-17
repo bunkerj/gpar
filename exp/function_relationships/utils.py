@@ -2,7 +2,7 @@ import GPy
 import numpy as np
 from evaluation import mse
 from matplotlib import pyplot as plt
-from utils import slice_column, concat_right_column
+from src_utils import slice_column, concat_right_column
 from kernels import get_linear_input_dependent_kernel
 
 NUM_SUBPLOTS = 3

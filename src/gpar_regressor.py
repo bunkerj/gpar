@@ -1,6 +1,5 @@
 import GPy
-import numpy as np
-from utils import should_update_max, slice_column, concat_right_column
+from src_utils import should_update_max, slice_column, concat_right_column
 
 
 class GPARRegression:
