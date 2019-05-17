@@ -20,7 +20,6 @@ def get_linear_input_dependent_kernel(original_X, current_X):
         k2 = GPy.kern.RatQuad(input_dim=X_dim, active_dims=list(range(X_dim)))
         k_linear = GPy.kern.Linear(input_dim=Y_dim,
                                    active_dims=list(range(X_dim, X_dim + Y_dim)))
-
         return k1 + k2 * k_linear
     return k1
 

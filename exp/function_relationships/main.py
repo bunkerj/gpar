@@ -2,13 +2,13 @@ import numpy as np
 from src_utils import map_and_stack_outputs
 from matplotlib import pyplot as plt
 from gpar_regressor import GPARRegression
-from utils import Visualiser
 from kernels import get_non_linear_input_dependent_kernel
 from synthetic_data_functions import synthetic_functions, noisy_synthetic_functions
+from utils import get_igp_predictions, plot_mse_values, plot_all_outputs
 
 np.random.seed(17)
 
-NUM_RESTARTS = 5
+NUM_RESTARTS = 35
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 
 # Construct synthetic observations
@@ -21,13 +21,16 @@ n_new = 1000
 X_new = np.linspace(0, 1, n_new).reshape((n_new, 1))
 Y_true = map_and_stack_outputs(synthetic_functions, X_new)
 
-# Get predictions from GPAR
+# Get GPAR predictions
 gpar_model = GPARRegression(X_obs, Y_obs, KERNEL_FUNCTION, num_restarts=NUM_RESTARTS)
 gpar_model.print_ordering()
-means, variances = gpar_model.predict(X_new)
+gpar_means, gpar_vars = gpar_model.predict(X_new)
+
+# Get IGP predictions
+igp_means, igp_vars = get_igp_predictions(X_obs, Y_obs, X_new, NUM_RESTARTS)
 
 # Display results
-visualiser = Visualiser(means, variances, X_obs, Y_obs, X_new, Y_true)
-visualiser.plot_mse_values(0)
-visualiser.plot_all_outputs(1)
+plot_mse_values(gpar_means, igp_means, Y_true, figure_id_start=0)
+plot_all_outputs(gpar_means, gpar_vars, igp_means, igp_vars,
+                 X_new, Y_true, X_obs, Y_obs, figure_id_start=1)
 plt.show()
