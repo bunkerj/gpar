@@ -6,7 +6,7 @@ from synthetic_data_functions import y_exp2_clean
 from kernels import get_non_linear_input_dependent_kernel
 from gpar_regressor import GPARRegression
 
-NUM_RESTARTS = 50
+NUM_RESTARTS = 10
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 
 
@@ -65,7 +65,7 @@ means, variances = get_igp_predictions(X_obs, Y_obs, X_new)
 noise_igp = Y_new - means
 
 # Display results
-plot_noise(0, X_new, noise_true)
+plot_noise(0, X_true, noise_true)
 plot_noise(1, X_new, noise_gpar)
 plot_noise(2, X_new, noise_igp)
 plt.show()
