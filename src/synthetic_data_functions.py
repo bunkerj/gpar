@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import sin, cos, pi, exp, sqrt
 
-# ------------------------------ exp 1 ------------------------------ #
+# ------------------------------ Function Relationships  ------------------------------ #
 
 NOISE_VAR = 0.05
 
@@ -34,7 +34,7 @@ synthetic_functions = (y1_exp1, y2_exp1, y3_exp1)
 noisy_synthetic_functions = (y1_exp1_noisy, y2_exp1_noisy, y3_exp1_noisy)
 
 
-# ------------------------------ exp 2 ------------------------------ #
+# ------------------------------ Noise Structure ------------------------------ #
 
 
 def f1_exp2(x):
@@ -63,9 +63,9 @@ def y_exp2_clean(X, is_noisy):
     noise_matrix = get_noise_matrix(n) if is_noisy else None
     for idx in range(n):
         Y[idx, 0] = f1_exp2(X[idx])
-        Y[idx, 0] = f2_exp2(X[idx])
-        Y[idx, 0] = f2_exp2(X[idx])
-        Y[idx, 0] = f2_exp2(X[idx])
+        Y[idx, 1] = f2_exp2(X[idx])
+        Y[idx, 2] = f2_exp2(X[idx])
+        Y[idx, 3] = f2_exp2(X[idx])
         if is_noisy:
             Y[idx, 0] += noise_matrix[idx, 0]
             Y[idx, 1] += (np.sin(2 * np.pi * X[idx]) ** 2) * noise_matrix[idx, 0] + \

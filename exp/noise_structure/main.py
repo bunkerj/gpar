@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from synthetic_data_functions import y_exp2_clean
+from synthetic_data_functions import y_exp2
 from kernels import get_non_linear_input_dependent_kernel
 from gpar_regressor import GPARRegression
 from utils import plot_noise, get_igp_predictions
@@ -15,17 +15,17 @@ END = 1
 # Construct synthetic outputs
 n_true = 100000
 X = np.linspace(START, END, n_true).reshape((n_true, 1))
-Y_true_noisy = y_exp2_clean(X, is_noisy=True)
-Y_true = y_exp2_clean(X, is_noisy=False)
+Y_true_noisy = y_exp2(X, is_noisy=True)
+Y_true = y_exp2(X, is_noisy=False)
 noise_true = Y_true_noisy - Y_true
 
 # Construct observations
 n_obs = 100
 X_obs = np.linspace(START, END, n_obs).reshape((n_obs, 1))
-Y_obs = y_exp2_clean(X_obs, is_noisy=True)
+Y_obs = y_exp2(X_obs, is_noisy=True)
 
 # Construct get outputs at desired locations
-Y_new = y_exp2_clean(X, is_noisy=True)
+Y_new = y_exp2(X, is_noisy=True)
 
 # Get predictions from GPAR
 gpar_model = GPARRegression(X_obs, Y_obs, KERNEL_FUNCTION, num_restarts=NUM_RESTARTS)
