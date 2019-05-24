@@ -3,9 +3,10 @@ from matplotlib import pyplot as plt
 from src_utils import slice_column, concat_right_column
 
 
-def plot_noise(figure_id_start, X, noise):
+def plot_noise(figure_id_start, X, noise, title):
     plt.figure(figure_id_start)
     n_plots = noise.shape[1] - 1
+    plt.suptitle(title)
     for idx in range(1, n_plots + 1):
         plt.subplot(1, 3, idx)
         plt.scatter(slice_column(noise, 0),
