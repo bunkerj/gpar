@@ -17,6 +17,8 @@ def concat_right_column(matrix, col):
     if matrix is None:
         return np.array(col).reshape((len(col), 1))
     else:
+        if len(col.shape) == 1:
+            col = col.reshape((len(col), 1))
         return np.concatenate((matrix, col), axis=1)
 
 
