@@ -25,7 +25,7 @@ X_obs = np.linspace(START, END, n_obs).reshape((n_obs, 1))
 Y_obs = y_exp2(X_obs, is_noisy=True)
 split_output_obs = get_split_outputs(Y_obs)
 
-# Construct get outputs at desired locations
+# Get outputs at desired locations
 Y_new_noisy = y_exp2(X, is_noisy=True)
 
 

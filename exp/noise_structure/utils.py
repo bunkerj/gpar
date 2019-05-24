@@ -52,3 +52,10 @@ def get_split_outputs(Y):
         relevant_cols = [Y[:, 0], Y[:, scheme_idx]]
         split_observations.append(stack_all_columns(relevant_cols))
     return split_observations
+
+
+def plot_noise_histogram(nrows, ncols, idx, Y1, Y2, title):
+    plt.subplot(nrows, ncols, idx + 1)
+    plt.hist2d(Y1, Y2, (75, 75), cmap=plt.cm.jet)
+    plt.title(title)
+    plt.subplots_adjust(hspace=0.5, wspace=0.5)

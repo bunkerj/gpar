@@ -115,3 +115,7 @@ class GPARRegression:
             mean_dict[out_id] = mean
             var_dict[out_id] = var
         return self._stack_in_order(mean_dict), self._stack_in_order(var_dict)
+
+    def predict_single_output(self, X_new, out_id):
+        m = self.gaussian_process_dict[out_id]
+        return m.predict(X_new)
