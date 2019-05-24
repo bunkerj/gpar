@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import sin, cos, pi, exp, sqrt
+from src_utils import concat_right_column
 
 # ------------------------------ Function Relationships  ------------------------------ #
 
@@ -51,10 +52,14 @@ def f2_exp2(x):
            sqrt(2 * x)
 
 
-def get_noise_matrix(n):
-    eps1_values = np.random.normal(0, 0.1, size=(n, 1))
-    eps2_values = np.random.normal(0, 0.04, size=(n, 1))
-    return np.concatenate((eps1_values, eps2_values), axis=1)
+def get_noise_matrix(n, means=(0, 0), std_devs=(0.1, 0.04)):
+    if len(means) != len(std_devs):
+        raise Exception('Length mismatch')
+    noise_matrix = None
+    for i in range(len(means)):
+        eps = np.random.normal(means[i], std_devs[i], size=(n, 1))
+        noise_matrix = concat_right_column(noise_matrix, eps)
+    return noise_matrix
 
 
 def y_exp2(X, is_noisy):
