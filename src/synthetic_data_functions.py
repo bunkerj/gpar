@@ -57,7 +57,7 @@ def get_noise_matrix(n):
     return np.concatenate((eps1_values, eps2_values), axis=1)
 
 
-def y_exp2_clean(X, is_noisy):
+def y_exp2(X, is_noisy):
     n = len(X)
     Y = np.zeros((n, 4))
     noise_matrix = get_noise_matrix(n) if is_noisy else None
