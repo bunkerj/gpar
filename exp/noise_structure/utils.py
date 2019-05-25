@@ -1,6 +1,7 @@
-import GPy
+import numpy as np
 from matplotlib import pyplot as plt
-from src_utils import slice_column, concat_right_column, stack_all_columns
+from src_utils import slice_column, concat_right_column, \
+    stack_all_columns, get_single_igp_prediction
 
 
 def plot_noise(figure_id_start, X, noise, title):
@@ -11,26 +12,6 @@ def plot_noise(figure_id_start, X, noise, title):
         plt.subplot(1, 3, idx + 1)
         plt.scatter(slice_column(noise, 2 * idx),
                     slice_column(noise, 2 * idx + 1), s=1, c=X, cmap='magma')
-
-
-def get_single_igp_prediction(X_obs, Y_obs, X_new, out_id, kernel_function, num_restarts):
-    single_Y = slice_column(Y_obs, out_id)
-    kernel = kernel_function(X_obs, X_obs)
-    m = GPy.models.GPRegression(X_obs, single_Y, kernel)
-    m.optimize_restarts(num_restarts, verbose=False)
-    return m.predict(X_new)
-
-
-def get_igp_predictions(X_obs, Y_obs, X_new, kernel_function, num_restarts):
-    stacked_means = None
-    stacked_vars = None
-    n = Y_obs.shape[1]
-    for out_id in range(n):
-        means, variances = get_single_igp_prediction(X_obs, Y_obs, X_new, out_id,
-                                                     kernel_function, num_restarts)
-        stacked_means = concat_right_column(stacked_means, means)
-        stacked_vars = concat_right_column(stacked_vars, variances)
-    return stacked_means, stacked_vars
 
 
 def get_prediction_noise(Y_new, model_predictor, split_observations):
@@ -54,8 +35,15 @@ def get_split_outputs(Y):
     return split_observations
 
 
-def plot_noise_histogram(nrows, ncols, idx, Y1, Y2, title):
+def plot_noise_histogram(nrows, ncols, idx, Y1, Y2, title=None):
     plt.subplot(nrows, ncols, idx + 1)
-    plt.hist2d(Y1, Y2, (75, 75), cmap=plt.cm.jet)
+    # if title is not None:
     plt.title(title)
+    plt.hist2d(Y1, Y2, (75, 75), cmap=plt.cm.jet)
     plt.subplots_adjust(hspace=0.5, wspace=0.5)
+
+
+def get_igp_output_samples(X_obs, Y_obs, x_value, kernel_function, num_restarts, out_id, n):
+    igp_means1, igp_vars1 = \
+        get_single_igp_prediction(X_obs, Y_obs, x_value, kernel_function, num_restarts, out_id)
+    return np.random.normal(float(igp_means1), np.sqrt(float(igp_vars1)), n)

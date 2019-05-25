@@ -1,10 +1,10 @@
 import numpy as np
-from src_utils import map_and_stack_outputs
+from src_utils import map_and_stack_outputs, get_igp_predictions
 from matplotlib import pyplot as plt
 from gpar_regressor import GPARRegression
 from kernels import get_non_linear_input_dependent_kernel
 from synthetic_data_functions import synthetic_functions, noisy_synthetic_functions
-from utils import get_igp_predictions, plot_mse_values, plot_all_outputs
+from utils import plot_mse_values, plot_all_outputs
 
 np.random.seed(17)
 
@@ -27,7 +27,7 @@ gpar_model.print_ordering()
 gpar_means, gpar_vars = gpar_model.predict(X_new)
 
 # Get IGP predictions
-igp_means, igp_vars = get_igp_predictions(X_obs, Y_obs, X_new, NUM_RESTARTS)
+igp_means, igp_vars = get_igp_predictions(X_obs, Y_obs, X_new, KERNEL_FUNCTION, NUM_RESTARTS)
 
 # Display results
 plot_mse_values(gpar_means, igp_means, Y_true, figure_id_start=0)

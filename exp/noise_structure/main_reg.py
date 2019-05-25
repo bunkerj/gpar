@@ -3,8 +3,8 @@ from matplotlib import pyplot as plt
 from synthetic_data_functions import y_exp2
 from kernels import get_non_linear_input_dependent_kernel
 from gpar_regressor import GPARRegression
-from utils import plot_noise, get_igp_predictions, \
-    get_split_outputs, get_prediction_noise
+from src_utils import get_igp_predictions
+from utils import plot_noise, get_split_outputs, get_prediction_noise
 
 NUM_RESTARTS = 10
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel

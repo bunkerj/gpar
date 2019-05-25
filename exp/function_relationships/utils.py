@@ -1,29 +1,9 @@
-import GPy
 import numpy as np
 from evaluation import mse
 from matplotlib import pyplot as plt
-from src_utils import slice_column, concat_right_column
-from kernels import get_linear_input_dependent_kernel
+from src_utils import slice_column
 
 NUM_SUBPLOTS = 3
-
-
-def get_igp_predictions(X_obs, Y_obs, X_new, num_restarts):
-    stacked_means = None
-    stacked_vars = None
-    for out_id in range(Y_obs.shape[1]):
-        means, variances = get_single_igp_prediction(X_obs, Y_obs, X_new, num_restarts, out_id)
-        stacked_means = concat_right_column(stacked_means, means)
-        stacked_vars = concat_right_column(stacked_vars, variances)
-    return stacked_means, stacked_vars
-
-
-def get_single_igp_prediction(X_obs, Y_obs, X_new, num_restarts, out_id):
-    single_Y = slice_column(Y_obs, out_id)
-    kernel = get_linear_input_dependent_kernel(X_obs, X_obs)
-    m = GPy.models.GPRegression(X_obs, single_Y, kernel)
-    m.optimize_restarts(num_restarts, verbose=False)
-    return m.predict(X_new)
 
 
 def specify_subplot(out_id):
