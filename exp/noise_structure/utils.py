@@ -37,13 +37,16 @@ def get_split_outputs(Y):
 
 def plot_noise_histogram(nrows, ncols, idx, Y1, Y2, title=None):
     plt.subplot(nrows, ncols, idx + 1)
-    # if title is not None:
     plt.title(title)
     plt.hist2d(Y1, Y2, (75, 75), cmap=plt.cm.jet)
     plt.subplots_adjust(hspace=0.5, wspace=0.5)
 
 
 def get_igp_output_samples(X_obs, Y_obs, x_value, kernel_function, num_restarts, out_id, n):
-    igp_means1, igp_vars1 = \
+    igp_means, igp_vars = \
         get_single_igp_prediction(X_obs, Y_obs, x_value, kernel_function, num_restarts, out_id)
-    return np.random.normal(float(igp_means1), np.sqrt(float(igp_vars1)), n)
+    return np.random.normal(float(igp_means), np.sqrt(float(igp_vars)), n)
+
+
+def get_gpar_output_samples(igp_means, igp_vars):
+    return np.random.normal(igp_means, np.sqrt(igp_vars)).flatten()
