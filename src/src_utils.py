@@ -1,8 +1,6 @@
 import GPy
 import numpy as np
 
-from kernels import get_linear_input_dependent_kernel
-
 
 def should_update_max(max_value, current_value):
     return max_value is None or current_value > max_value
