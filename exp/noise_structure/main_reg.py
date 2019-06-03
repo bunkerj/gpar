@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from synthetic_data_functions import y_exp2
 from kernels import get_non_linear_input_dependent_kernel
 from gpar_regressor import GPARRegression
-from src_utils import get_igp_predictions
+from igp_regression import IGPRegression
 from utils import plot_noise, get_split_outputs, get_prediction_noise
 
 NUM_RESTARTS = 10
@@ -40,7 +40,8 @@ def gpar_predictor(Y):
 
 
 def igp_predictor(Y):
-    return get_igp_predictions(X_obs, Y, X, KERNEL_FUNCTION, NUM_RESTARTS)
+    igp_model = IGPRegression(X_obs, Y, KERNEL_FUNCTION, num_restarts=NUM_RESTARTS)
+    return igp_model.predict(X)
 
 
 noise_true = get_prediction_noise(Y_true_noisy, true_predictor, split_output_true)
