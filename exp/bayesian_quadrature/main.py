@@ -14,9 +14,9 @@ FUNCTION_IDX = 0
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 
 # Define function to evaluate
-custom_func = lambda x: y3_exp1(x)
-START = 0
-END = 1
+custom_func = lambda x: np.exp(-(x ** 2) - np.sin(3 * x) ** 2)
+START = -3
+END = 3
 N_OBS = 5
 
 # Construct synthetic observations
@@ -24,10 +24,9 @@ X_obs = np.linspace(START, END, N_OBS).reshape((N_OBS, 1))
 y_single_obs = custom_func(X_obs)
 
 # Train GP model
-m = GPy.models.GPRegression(X_obs, y_single_obs,
-                            KERNEL_FUNCTION(X_obs, X_obs), noise_var=0.001)
-# m = GPy.models.GPRegression(X_obs, y_single_obs,
-#                             GPy.kern.RBF(1), noise_var=0.001)
+# m = GPy.models.GPRegression(X_obs, y_single_obs, KERNEL_FUNCTION(X_obs, X_obs))
+m = GPy.models.GPRegression(X_obs, y_single_obs, GPy.kern.RBF(1))
+m.Gaussian_noise.variance.fix(0)
 m.optimize_restarts(NUM_RESTARTS, verbose=False)
 
 # Get integral through Bayesian Quadrature
@@ -38,9 +37,11 @@ result_base = integrate.quad(custom_func, START, END)
 integral_base = result_base[0]
 
 # Print numerical indicators
-print('Approximated value: {}'.format(float(integral_base)))
-print('Estimated mean: {}'.format(float(integral_bq)))
-print('Estimated std: {}'.format(float(integral_std_bq)))
+print(m)
+print('Parameters: {}'.format(m.kern.param_array))
+print('Approx value: {}'.format(float(integral_base)))
+print('BQ mean: {}'.format(float(integral_bq)))
+print('BQ std: {}'.format(float(integral_std_bq)))
 
 # Get True values
 n_new = 1000
@@ -57,17 +58,20 @@ lb = np.min((integral_base - 2, integral_bq - 3 * integral_std_bq))
 x_gauss = np.linspace(lb, ub, 1000).flatten()
 y_gauss = stats.norm.pdf(x_gauss, integral_bq, integral_std_bq).flatten()
 plt.plot(x_gauss, y_gauss)
-plt.axvline(integral_base, color='r')
+plt.axvline(integral_base, color='r', label='Truth', linestyle='--')
+plt.axvline(integral_bq, color='b', label='BQ Mean', linestyle='--')
+plt.legend(loc='upper left')
 
 # Create truth vs prediction plot
 plt.subplot(1, 2, 2)
-plt.plot(X_new, y_single_means_true, label='Truth')
-plt.plot(X_new, y_single_means_pred, label='Predictions')
+plt.plot(X_new, y_single_means_true, label='True Function')
+plt.plot(X_new, y_single_means_pred, label='GP Mean')
 plt.fill_between(
     X_new.flatten(),
     lb_means_pred.flatten(),
     ub_means_pred.flatten(),
     alpha=0.2,
     edgecolor='b')
+plt.scatter(X_obs, y_single_obs, s=20, marker='x', color='b')
 plt.legend(loc='upper left')
 plt.show()
