@@ -10,6 +10,19 @@ class IGPRegression:
         self.n = X_obs.shape[0]
         self._get_kernel = kernel_function
         self.num_restarts = num_restarts
+        self.models = self.get_gp_models()
+
+    def get_gp_models(self):
+        if hasattr(self, 'models'):
+            return self.models
+        models = []
+        for out_id in range(self.Y_obs.shape[1]):
+            single_y = slice_column(self.Y_obs, out_id)
+            kernel = self._get_kernel(self.X_obs, self.X_obs)
+            m = GPy.models.GPRegression(self.X_obs, single_y, kernel)
+            m.optimize_restarts(self.num_restarts, verbose=False)
+            models.append(m)
+        return tuple(models)
 
     def predict(self, X_new):
         stacked_means = None
@@ -22,8 +35,5 @@ class IGPRegression:
         return stacked_means, stacked_vars
 
     def single_predict(self, X_new, out_id=0):
-        single_Y = slice_column(self.Y_obs, out_id)
-        kernel = self._get_kernel(self.X_obs, self.X_obs)
-        m = GPy.models.GPRegression(self.X_obs, single_Y, kernel)
-        m.optimize_restarts(self.num_restarts, verbose=False)
+        m = self.models[out_id]
         return m.predict(X_new)
