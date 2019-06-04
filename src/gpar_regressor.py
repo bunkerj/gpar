@@ -3,7 +3,8 @@ from src_utils import should_update_max, slice_column, concat_right_column
 
 
 class GPARRegression:
-    def __init__(self, X, Y, kernel_function, manual_ordering=None, num_restarts=10):
+    def __init__(self, X, Y, kernel_function,
+                 manual_ordering=None, num_restarts=10, is_zero_noise=False):
         # Each output stream should correspond to a column.
         self.Y = Y
         self.X = X
@@ -11,13 +12,18 @@ class GPARRegression:
         self._get_kernel = kernel_function
         self.num_restarts = num_restarts
         self.ordering = manual_ordering
+        self.is_zero_noise = is_zero_noise
 
         models, ordering = self._get_models_and_ordering(manual_ordering)
+        self.models = models
         self.gaussian_process_dict = dict(zip(ordering, models))
         self.ordering = ordering
 
     def get_ordering(self):
         return self.ordering
+
+    def get_gp_dict(self):
+        return self.gaussian_process_dict
 
     def print_ordering(self):
         ordering_string = ', '.join('Y{}'.format(out_id + 1) for out_id in self.ordering)
@@ -38,6 +44,8 @@ class GPARRegression:
         print('Iteration {}/{}...'.format(curr_iter, total_iter_count))
 
     def _get_gp_models(self, manual_ordering):
+        if hasattr(self, 'models'):
+            return self.models
         models = []
         current_X = self.X
         for iter, out_id in enumerate(manual_ordering):
@@ -89,6 +97,8 @@ class GPARRegression:
         y = slice_column(self.Y, out_id)
         kernel = self._get_kernel(self.X, current_X)
         m = GPy.models.GPRegression(current_X, y, kernel)
+        if self.is_zero_noise:
+            m.Gaussian_noise.variance.fix(0)
         m.optimize_restarts(self.num_restarts, verbose=False)
         return m
 

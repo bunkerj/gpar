@@ -1,77 +1,88 @@
 import GPy
 import numpy as np
-import scipy.stats as stats
 import scipy.integrate as integrate
+from gpar_regressor import GPARRegression
+from igp_regression import IGPRegression
 from kernels import get_non_linear_input_dependent_kernel
-from synthetic_data_functions import y3_exp1
+from synthetic_data_functions import synthetic_functions
+from src_utils import map_and_stack_outputs, slice_column
 from matplotlib import pyplot as plt
-from utils import bayesian_quadrature
+from utils import bayesian_quadrature, plot_bq_integral_gp_dist, \
+    plot_bq_integrand_gp, plot_bq_integrad_truth
 
 np.random.seed(17)
 
 NUM_RESTARTS = 10
 FUNCTION_IDX = 0
-KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
+# KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
+KERNEL_FUNCTION = lambda X, Y: GPy.kern.RBF(1)
 
 # Define function to evaluate
-custom_func = lambda x: np.exp(-(x ** 2) - np.sin(3 * x) ** 2)
-START = -3
-END = 3
-N_OBS = 5
+# custom_func = lambda x: np.exp(-(x ** 2) - np.sin(3 * x) ** 2)
+START = 0
+END = 1
+N_OBS = 3
 
 # Construct synthetic observations
 X_obs = np.linspace(START, END, N_OBS).reshape((N_OBS, 1))
-y_single_obs = custom_func(X_obs)
+Y_obs = map_and_stack_outputs(synthetic_functions, X_obs)
 
-# Train GP model
-# m = GPy.models.GPRegression(X_obs, y_single_obs, KERNEL_FUNCTION(X_obs, X_obs))
-m = GPy.models.GPRegression(X_obs, y_single_obs, GPy.kern.RBF(1))
-m.Gaussian_noise.variance.fix(0)
-m.optimize_restarts(NUM_RESTARTS, verbose=False)
+# Train GPAR model
+# m = GPy.models.GPRegression(X_obs, y_single_obs,
+#                             KERNEL_FUNCTION(X_obs, X_obs))
+gpar_model = GPARRegression(X_obs, Y_obs,
+                            KERNEL_FUNCTION, is_zero_noise=True)
+gpar_gps = gpar_model.get_gp_dict()
+ordering = gpar_model.get_ordering()
 
-# Get integral through Bayesian Quadrature
-integral_bq, integral_std_bq = bayesian_quadrature(m, X_obs, y_single_obs, START, END)
+# Train IGP model
+igp_model = IGPRegression(X_obs, Y_obs,
+                          KERNEL_FUNCTION, is_zero_noise=True)
+igp_gps = igp_model.get_gp_models()
 
-# Approximate integral of function (using standard numerical approach)
-result_base = integrate.quad(custom_func, START, END)
-integral_base = result_base[0]
+# for i in range(Y_obs.shape[1]):
+for i in [ordering[0]]:
+    # Set preliminary variables
+    m_gpar = gpar_gps[i]
+    m_igp = igp_gps[i]
+    y_single_obs = slice_column(Y_obs, i)
+    custom_func = synthetic_functions[i]
 
-# Print numerical indicators
-print(m)
-print('Parameters: {}'.format(m.kern.param_array))
-print('Approx value: {}'.format(float(integral_base)))
-print('BQ mean: {}'.format(float(integral_bq)))
-print('BQ std: {}'.format(float(integral_std_bq)))
+    # Get integral through Bayesian Quadrature
+    integral_bq_gpar, integral_std_bq_gpar = \
+        bayesian_quadrature(m_gpar, X_obs, y_single_obs, START, END)
+    integral_bq_igp, integral_std_bq_igp = \
+        bayesian_quadrature(m_igp, X_obs, y_single_obs, START, END)
 
-# Get True values
-n_new = 1000
-X_new = np.linspace(START, END, n_new).reshape((n_new, 1))
-y_single_means_pred, y_single_vars_pred = m.predict(X_new)
-ub_means_pred = y_single_means_pred + 2 * np.sqrt(y_single_vars_pred)
-lb_means_pred = y_single_means_pred - 2 * np.sqrt(y_single_vars_pred)
-y_single_means_true = custom_func(X_new)
+    # Approximate integral of function (using standard numerical approach)
+    result_base = integrate.quad(custom_func, START, END)
+    integral_base = result_base[0]
 
-# Create GP plot
-plt.subplot(1, 2, 1)
-ub = np.max((integral_base + 2, integral_bq + 3 * integral_std_bq))
-lb = np.min((integral_base - 2, integral_bq - 3 * integral_std_bq))
-x_gauss = np.linspace(lb, ub, 1000).flatten()
-y_gauss = stats.norm.pdf(x_gauss, integral_bq, integral_std_bq).flatten()
-plt.plot(x_gauss, y_gauss)
-plt.axvline(integral_base, color='r', label='Truth', linestyle='--')
-plt.axvline(integral_bq, color='b', label='BQ Mean', linestyle='--')
-plt.legend(loc='upper left')
+    # Print numerical indicators
+    print(m_gpar)
 
-# Create truth vs prediction plot
-plt.subplot(1, 2, 2)
-plt.plot(X_new, y_single_means_true, label='True Function')
-plt.plot(X_new, y_single_means_pred, label='GP Mean')
-plt.fill_between(
-    X_new.flatten(),
-    lb_means_pred.flatten(),
-    ub_means_pred.flatten(),
-    alpha=0.2,
-    edgecolor='b')
-plt.scatter(X_obs, y_single_obs, s=20, marker='x', color='b')
-plt.legend(loc='upper left')
+    gpar_model.print_ordering()
+    print('Parameters: {}'.format(m_gpar.kern.param_array))
+    print('Approx value: {}'.format(float(integral_base)))
+    print('\nGPAR BQ mean: {}'.format(float(integral_bq_gpar)))
+    print('GPAR BQ std: {}'.format(float(integral_std_bq_gpar)))
+    print('\nIGP BQ mean: {}'.format(float(integral_bq_igp)))
+    print('IGP BQ std: {}'.format(float(integral_std_bq_igp)))
+
+    # Create GP plot
+    plt.subplot(2, 3, 1)
+    plot_bq_integral_gp_dist(integral_base, integral_bq_gpar, integral_std_bq_gpar)
+    plt.axvline(integral_base, color='r', label='Truth', linestyle='--')
+    plt.axvline(integral_bq_gpar, color='b', label='GPAR BQ Mean', linestyle='--')
+    plt.axvline(integral_bq_igp, color='k', label='IGP BQ Mean', linestyle='--')
+    plt.legend(loc='upper right')
+
+    # Create truth vs prediction plot
+    plt.subplot(2, 3, 4)
+    plot_bq_integrad_truth(custom_func, START, END)
+    plot_bq_integrand_gp(m_gpar, START, END, 'GPAR Mean', display_var=True)
+    plot_bq_integrand_gp(m_igp, START, END, 'IGP Mean', display_var=False)
+    plt.scatter(X_obs, y_single_obs, s=20, marker='x', color='b', label='Observations')
+    plt.legend(loc='upper right')
+
 plt.show()
