@@ -52,7 +52,7 @@ class GPARRegression:
             self._print_iteration(iter + 1, len(manual_ordering))
             m = self._get_trained_gp_model(current_X, out_id)
             models.append(m)
-            current_X = self._augment_X(current_X, out_id)
+            current_X = self.augment_X(current_X, out_id)
         return tuple(models)
 
     def _get_gp_models_with_ordering(self):
@@ -72,10 +72,12 @@ class GPARRegression:
             models.append(max_log_likelihood_model)
             ordering.append(max_log_likelihood_id)
             remaining_output_ids.remove(max_log_likelihood_id)
-            current_X = self._augment_X(current_X, max_log_likelihood_id)
+            current_X = self.augment_X(current_X, max_log_likelihood_id)
         return tuple(models), tuple(ordering)
 
-    def _augment_X(self, current_X, out_id):
+    def augment_X(self, current_X, out_id):
+        if current_X is None:
+            return self.X
         y = slice_column(self.Y, out_id)
         return concat_right_column(current_X, y)
 

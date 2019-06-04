@@ -32,7 +32,8 @@ def get_precision_matrix(m, X_obs):
     return np.linalg.pinv(C)
 
 
-def get_kernel_integral_values(X_obs, end, m, n_obs, start):
+def get_kernel_integral_values(X_obs, m, start, end):
+    n_obs = X_obs.shape[0]
     approx_single_int = np.zeros((n_obs, 1))
     for i in range(n_obs):
         n = len(X_obs[i, :])
@@ -43,16 +44,15 @@ def get_kernel_integral_values(X_obs, end, m, n_obs, start):
     return approx_single_int
 
 
-def get_kernel_integral_constant(start, end, m):
+def get_kernel_integral_constant(m, start, end):
     result = integrate.nquad(double_integrand, [[start, end], [start, end]],
                              args=(m,))
     return result[0]
 
 
 def bayesian_quadrature(m, X_obs, y_single_obs, start, end):
-    n_obs = X_obs.shape[0]
-    kernel_int_vect = get_kernel_integral_values(X_obs, end, m, n_obs, start)
-    c = get_kernel_integral_constant(start, end, m)
+    kernel_int_vect = get_kernel_integral_values(X_obs, m, start, end)
+    c = get_kernel_integral_constant(m, start, end)
     C_inv = get_precision_matrix(m, X_obs)
 
     tmp = kernel_int_vect.transpose().dot(C_inv)
