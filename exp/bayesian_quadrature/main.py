@@ -35,6 +35,7 @@ gpar_model = GPARRegression(X_obs, Y_obs,
                             KERNEL_FUNCTION, is_zero_noise=True)
 gpar_gps = gpar_model.get_gp_dict()
 ordering = gpar_model.get_ordering()
+gpar_model.print_ordering()
 
 # Train IGP model
 igp_model = IGPRegression(X_obs, Y_obs,
@@ -63,8 +64,6 @@ for idx, out_idx in enumerate([ordering[0]]):
     # Print numerical indicators
     print('--------------- Y{} ---------------'.format(out_idx + 1))
     print(m_gpar)
-
-    gpar_model.print_ordering()
     print('Parameters: {}'.format(m_gpar.kern.param_array))
     print('Approx value: {}'.format(float(integral_base)))
     print('\nGPAR BQ mean: {}'.format(float(integral_bq_gpar)))
