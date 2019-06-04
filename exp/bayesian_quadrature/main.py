@@ -1,7 +1,7 @@
 import GPy
 import numpy as np
 import scipy.integrate as integrate
-from gpar_regressor import GPARRegression
+from gpar_regression import GPARRegression
 from igp_regression import IGPRegression
 from kernels import get_non_linear_input_dependent_kernel
 from synthetic_data_functions import synthetic_functions

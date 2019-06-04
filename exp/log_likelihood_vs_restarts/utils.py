@@ -1,7 +1,7 @@
 import numpy as np
 from src_utils import slice_column
 from evaluation import mse
-from gpar_regressor import GPARRegression
+from gpar_regression import GPARRegression
 from matplotlib import pyplot as plt
 
 
