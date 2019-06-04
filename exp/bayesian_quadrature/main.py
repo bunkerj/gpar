@@ -14,14 +14,15 @@ np.random.seed(17)
 
 NUM_RESTARTS = 10
 FUNCTION_IDX = 0
-# KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
-KERNEL_FUNCTION = lambda X, Y: GPy.kern.RBF(1)
+KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
+# KERNEL_FUNCTION = lambda X, Y: GPy.kern.RBF(X.shape[1])
 
 # Define function to evaluate
 # custom_func = lambda x: np.exp(-(x ** 2) - np.sin(3 * x) ** 2)
 START = 0
 END = 1
-N_OBS = 3
+N_OBS = 5
+TITLE = 'N_OBS: {}'.format(N_OBS)
 
 # Construct synthetic observations
 X_obs = np.linspace(START, END, N_OBS).reshape((N_OBS, 1))
@@ -43,7 +44,7 @@ igp_model = IGPRegression(X_obs, Y_obs,
 igp_gps = igp_model.get_gp_models()
 
 # for i in range(Y_obs.shape[1]):
-for idx, out_idx in enumerate([ordering[0]]):
+for idx, out_idx in enumerate([ordering[0], ordering[1]]):
     # Set preliminary variables
     m_gpar = gpar_gps[out_idx]
     m_igp = igp_gps[out_idx]
@@ -62,7 +63,7 @@ for idx, out_idx in enumerate([ordering[0]]):
     integral_base = result_base[0]
 
     # Print numerical indicators
-    print('--------------- Y{} ---------------'.format(out_idx + 1))
+    print('\n--------------- Y{} ---------------'.format(out_idx + 1))
     print(m_gpar)
     print('Parameters: {}'.format(m_gpar.kern.param_array))
     print('Approx value: {}'.format(float(integral_base)))
@@ -71,20 +72,25 @@ for idx, out_idx in enumerate([ordering[0]]):
     print('\nIGP BQ mean: {}'.format(float(integral_bq_igp)))
     print('IGP BQ std: {}'.format(float(integral_std_bq_igp)))
 
+    plt.suptitle(TITLE)
+
     # Create GP plot
-    plt.subplot(2, 3, idx + 1)
-    plot_bq_integral_gp_dist(integral_base, integral_bq_gpar, integral_std_bq_gpar)
+    plt.subplot(2, 2, idx + 1)
+    plt.title('Y{}'.format(out_idx + 1))
+    plot_bq_integral_gp_dist(integral_base, integral_bq_gpar, integral_std_bq_gpar, 'GPAR Dist')
     plt.axvline(integral_base, color='r', label='Truth', linestyle='--')
     plt.axvline(integral_bq_gpar, color='b', label='GPAR BQ Mean', linestyle='--')
-    plt.axvline(integral_bq_igp, color='k', label='IGP BQ Mean', linestyle='--')
-    plt.legend(loc='upper right')
+    plt.axvline(integral_bq_igp, color='g', label='IGP BQ Mean', linestyle='--')
+    if idx + 1 == 2:
+        plt.legend(loc='upper right')
 
     # Create truth vs prediction plot
-    plt.subplot(2, 3, idx + 4)
+    plt.subplot(2, 2, idx + 3)
     plot_bq_integrad_truth(custom_func, START, END)
-    plot_bq_integrand_gp(m_gpar, START, END, 'GPAR Mean', display_var=True)
-    plot_bq_integrand_gp(m_igp, START, END, 'IGP Mean', display_var=False)
+    plot_bq_integrand_gp(gpar_model, START, END, 'GPAR Mean', out_idx, display_var=True)
+    plot_bq_integrand_gp(m_igp, START, END, 'IGP Mean', out_idx, display_var=False)
     plt.scatter(X_obs, y_single_obs, s=20, marker='x', color='b', label='Observations')
-    plt.legend(loc='upper right')
+    if idx + 3 == 4:
+        plt.legend(loc='upper right')
 
 plt.show()
