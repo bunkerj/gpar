@@ -30,7 +30,7 @@ def get_precision_matrix(m, X_obs):
                            X_obs[j].reshape((1, input_dim)))
             C[i, j] = cov
             C[j, i] = cov
-    return np.linalg.pinv(C)
+    return np.linalg.pinv(C + np.eye(n, n) * m.Gaussian_noise.variance)
 
 
 def get_integration_bounds(start, end, X_obs):
