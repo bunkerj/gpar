@@ -1,4 +1,4 @@
-import GPy
+from GPy.models import GPRegression, SparseGPRegression
 
 
 class Regression:
@@ -14,6 +14,7 @@ class Regression:
         self.num_inducing = num_inducing
 
     def _get_model(self, *base_args):
-        return (GPy.models.GPRegression(*base_args)
+        return (GPRegression(*base_args)
                 if self.num_inducing is None
-                else GPy.models.SparseGPRegression(*base_args, num_inducing=self.num_inducing))
+                else SparseGPRegression(*base_args,
+                                        num_inducing=self.num_inducing))
