@@ -4,7 +4,7 @@ from GPy.models import GPRegression, SparseGPRegression
 class Regression:
     def __init__(self, X_obs, Y_obs, kernel_function, num_restarts=10,
                  is_zero_noise=False, num_inducing=None):
-        # Each output stream should correspond to a column.
+        # Each Y_obs column should correspond to an output stream.
         self.Y_obs = Y_obs
         self.X_obs = X_obs
         self.n = X_obs.shape[0]

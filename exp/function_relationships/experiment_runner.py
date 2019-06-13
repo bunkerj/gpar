@@ -5,19 +5,22 @@ from utils import plot_mse_values, plot_all_outputs
 
 
 class ExperimentRunner:
-    def __init__(self, X_obs, Y_obs, X_new, Y_true, kernel_function, num_restarts):
+    def __init__(self, X_obs, Y_obs, X_new, Y_true, kernel_function,
+                 num_restarts=10, num_inducing=None):
         self.X_obs = X_obs
         self.Y_obs = Y_obs
         self.X_new = X_new
         self.Y_true = Y_true
         self.kernel_function = kernel_function
         self.num_restarts = num_restarts
+        self.num_inducing = num_inducing
         self.has_trained_models = False
 
     def _get_model_predictions(self, model_class):
         """Returns means and variances."""
         model = model_class(self.X_obs, self.Y_obs, self.kernel_function,
-                            num_restarts=self.num_restarts)
+                            num_restarts=self.num_restarts,
+                            num_inducing=self.num_inducing)
         return model.predict(self.X_new)
 
     def _get_gpar_predictions(self):
