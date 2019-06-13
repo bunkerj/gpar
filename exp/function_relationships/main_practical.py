@@ -1,9 +1,6 @@
 import numpy as np
-from matplotlib import pyplot as plt
-from regression.gpar_regression import GPARRegression
-from regression.igp_regression import IGPRegression
+from experiment_runner import ExperimentRunner
 from kernels import get_non_linear_input_dependent_kernel
-from utils import plot_mse_values, plot_all_outputs
 from src_utils import load_data_from_csv, normalize_data, \
     get_visible_index_bool, stack_all_columns
 
@@ -23,7 +20,7 @@ goog_close = normalize_data(goog_data['close']).values.reshape((len(index), 1))
 ndxt_close = normalize_data(ndxt_data['close']).values.reshape((len(index), 1))
 nqna_close = normalize_data(nqna_data['close']).values.reshape((len(index), 1))
 
-# Construct synthetic observations
+# Construct observations
 n_obs = sum(visible_index_bool)
 goog_close_visible = goog_close[visible_index_bool].reshape((n_obs, 1))
 ndxt_close_visible = ndxt_close[visible_index_bool].reshape((n_obs, 1))
@@ -36,19 +33,6 @@ n_new = len(index)
 X_new = index
 Y_true = stack_all_columns((goog_close, ndxt_close, nqna_close))
 
-# Get GPAR predictions
-gpar_model = GPARRegression(X_obs, Y_obs, KERNEL_FUNCTION,
-                            num_restarts=NUM_RESTARTS, num_inducing=150)
-gpar_model.print_ordering()
-gpar_means, gpar_vars = gpar_model.predict(X_new)
-
-# Get IGP predictions
-igp_model = IGPRegression(X_obs, Y_obs, KERNEL_FUNCTION,
-                          num_restarts=NUM_RESTARTS, num_inducing=150)
-igp_means, igp_vars = igp_model.predict(X_new)
-
-# Display results
-plot_mse_values(gpar_means, igp_means, Y_true, figure_id_start=0)
-plot_all_outputs(gpar_means, gpar_vars, igp_means, igp_vars,
-                 X_new, Y_true, X_obs, Y_obs, figure_id_start=1)
-plt.show()
+# Run experiment
+exp = ExperimentRunner(X_obs, Y_obs, X_new, Y_true, KERNEL_FUNCTION, NUM_RESTARTS)
+exp.run()
