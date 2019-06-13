@@ -3,7 +3,7 @@ import numpy as np
 import scipy.integrate as integrate
 from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
-from synthetic_data_functions import synthetic_functions
+from synthetic_functions import synthetic_functions
 from src_utils import map_and_stack_outputs, slice_column
 from matplotlib import pyplot as plt
 from utils import bayesian_quadrature, plot_bq_integral_gp_dist, \

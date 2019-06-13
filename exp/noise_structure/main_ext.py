@@ -1,5 +1,5 @@
 import numpy as np
-from synthetic_data_functions import y_exp2
+from synthetic_functions import y_exp2
 from kernels import get_linear_input_dependent_kernel
 from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression

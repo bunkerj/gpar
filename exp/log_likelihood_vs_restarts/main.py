@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from kernels import get_non_linear_input_dependent_kernel
 from utils import plot_log_likelihood_vs_restarts, get_total_mse_values_and_ordering_index
 from src_utils import map_and_stack_outputs
-from synthetic_data_functions import synthetic_functions, noisy_synthetic_functions
+from synthetic_functions import synthetic_functions, noisy_synthetic_functions
 
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 
