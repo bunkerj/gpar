@@ -1,5 +1,6 @@
-import GPy
+import os
 import numpy as np
+import pandas as pd
 
 
 def should_update_max(max_value, current_value):
@@ -40,3 +41,17 @@ def map_and_stack_outputs(funcs, X):
         single_Y = map_to_col_vector(f, X)
         Y = single_Y if Y is None else concat_right_column(Y, single_Y)
     return Y
+
+
+def load_data_from_csv(filename):
+    data_path = os.path.abspath(os.path.join(
+        __file__, '../..', 'data', filename))
+    return pd.read_csv(data_path, thousands=',')
+
+
+def normalize_data(data_col):
+    return (data_col - data_col.mean()) / data_col.std()
+
+
+def get_visible_index_bool(index, percent_visible):
+    return np.random.rand(len(index)) < percent_visible
