@@ -67,3 +67,7 @@ def plot_mse_values(model_means, igp_means, Y_true, figure_id_start):
         igp_mse = mse(true_means, single_igp_means)
         plot_bar_plot([gpar_mse, igp_mse], ['GPAR', 'IGP'])
         plt.title('Y{} MSE'.format(out_id + 1))
+
+
+def get_visible_index_bool(n, percent_visible):
+    return np.random.rand(n) < (percent_visible / 100)
