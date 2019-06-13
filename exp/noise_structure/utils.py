@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from igp_regression import IGPRegression
+from regression.igp_regression import IGPRegression
 from src_utils import slice_column, concat_right_column, stack_all_columns
 
 

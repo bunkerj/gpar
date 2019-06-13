@@ -2,8 +2,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from synthetic_data_functions import y_exp2
 from kernels import get_non_linear_input_dependent_kernel
-from gpar_regression import GPARRegression
-from igp_regression import IGPRegression
+from regression.gpar_regression import GPARRegression
+from regression.igp_regression import IGPRegression
 from utils import plot_noise, get_split_outputs, get_prediction_noise
 
 NUM_RESTARTS = 10

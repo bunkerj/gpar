@@ -1,8 +1,8 @@
 import numpy as np
 from src_utils import map_and_stack_outputs
 from matplotlib import pyplot as plt
-from gpar_regression import GPARRegression
-from igp_regression import IGPRegression
+from regression.gpar_regression import GPARRegression
+from regression.igp_regression import IGPRegression
 from kernels import get_non_linear_input_dependent_kernel
 from synthetic_data_functions import synthetic_functions, noisy_synthetic_functions
 from utils import plot_mse_values, plot_all_outputs

@@ -2,7 +2,7 @@ import numpy as np
 from synthetic_data_functions import y_exp2
 from kernels import get_linear_input_dependent_kernel
 from matplotlib import pyplot as plt
-from gpar_regression import GPARRegression
+from regression.gpar_regression import GPARRegression
 from src_utils import stack_all_columns
 from utils import get_split_outputs, plot_noise_histogram, \
     get_igp_output_samples, get_gpar_output_samples

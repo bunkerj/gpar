@@ -1,23 +1,18 @@
-import GPy
+from regression.regression import Regression
 from src_utils import should_update_max, slice_column, concat_right_column
 
 
-class GPARRegression:
-    def __init__(self, X, Y, kernel_function,
-                 manual_ordering=None, num_restarts=10, is_zero_noise=False):
-        # Each output stream should correspond to a column.
-        self.Y = Y
-        self.X = X
-        self.n = X.shape[0]
-        self._get_kernel = kernel_function
-        self.num_restarts = num_restarts
-        self.ordering = manual_ordering
-        self.is_zero_noise = is_zero_noise
-
+class GPARRegression(Regression):
+    def __init__(self, X, Y, kernel_function, manual_ordering=None,
+                 num_restarts=10, is_zero_noise=False, num_inducing=None):
+        super().__init__(X, Y, kernel_function,
+                         num_restarts=num_restarts,
+                         is_zero_noise=is_zero_noise,
+                         num_inducing=num_inducing)
         models, ordering = self._get_models_and_ordering(manual_ordering)
         self.models = models
-        self.gaussian_process_dict = dict(zip(ordering, models))
         self.ordering = ordering
+        self.gaussian_process_dict = dict(zip(ordering, models))
 
     def get_ordering(self):
         return self.ordering
@@ -25,8 +20,13 @@ class GPARRegression:
     def get_gp_dict(self):
         return self.gaussian_process_dict
 
+    def get_ordering_string(self):
+        ordering_arr = ['Y{}'.format(out_id + 1)
+                        for out_id in self.ordering]
+        return ', '.join(ordering_arr)
+
     def print_ordering(self):
-        ordering_string = ', '.join('Y{}'.format(out_id + 1) for out_id in self.ordering)
+        ordering_string = self.get_ordering_string()
         print('\nOutput ordering: {}'.format(ordering_string))
 
     def _get_models_and_ordering(self, manual_ordering):
@@ -47,7 +47,7 @@ class GPARRegression:
         if hasattr(self, 'models'):
             return self.models
         models = []
-        current_X = self.X
+        current_X = self.X_obs
         for iter, out_id in enumerate(manual_ordering):
             self._print_iteration(iter + 1, len(manual_ordering))
             m = self._get_trained_gp_model(current_X, out_id)
@@ -62,8 +62,8 @@ class GPARRegression:
         """
         models = []
         ordering = []
-        current_X = self.X
-        output_count = self.Y.shape[1]
+        current_X = self.X_obs
+        output_count = self.Y_obs.shape[1]
         remaining_output_ids = list(range(output_count))
         for iter in range(output_count):
             self._print_iteration(iter + 1, output_count)
@@ -77,8 +77,8 @@ class GPARRegression:
 
     def augment_X(self, current_X, out_id):
         if current_X is None:
-            return self.X
-        y = slice_column(self.Y, out_id)
+            return self.X_obs
+        y = slice_column(self.Y_obs, out_id)
         return concat_right_column(current_X, y)
 
     def _get_max_log_likelihood_models(self, current_X, remaining_output_ids):
@@ -96,9 +96,9 @@ class GPARRegression:
         return max_log_likelihood_model, max_log_likelihood_id
 
     def _get_trained_gp_model(self, current_X, out_id):
-        y = slice_column(self.Y, out_id)
-        kernel = self._get_kernel(self.X, current_X)
-        m = GPy.models.GPRegression(current_X, y, kernel)
+        y = slice_column(self.Y_obs, out_id)
+        kernel = self._get_kernel(self.X_obs, current_X)
+        m = self._get_model(current_X, y, kernel)
         if self.is_zero_noise:
             m.Gaussian_noise.variance.fix(0)
         m.optimize_restarts(self.num_restarts, verbose=False)

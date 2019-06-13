@@ -1,17 +1,14 @@
-import GPy
+from regression.regression import Regression
 from src_utils import slice_column, concat_right_column
 
 
-class IGPRegression:
+class IGPRegression(Regression):
     def __init__(self, X_obs, Y_obs, kernel_function,
-                 num_restarts=10, is_zero_noise=False):
-        # Each output stream should correspond to a column.
-        self.Y_obs = Y_obs
-        self.X_obs = X_obs
-        self.n = X_obs.shape[0]
-        self._get_kernel = kernel_function
-        self.num_restarts = num_restarts
-        self.is_zero_noise = is_zero_noise
+                 num_restarts=10, is_zero_noise=False, num_inducing=None):
+        super().__init__(X_obs, Y_obs, kernel_function,
+                         num_restarts=num_restarts,
+                         is_zero_noise=is_zero_noise,
+                         num_inducing=num_inducing)
         self.models = self.get_gp_models()
 
     def get_gp_models(self):
@@ -21,7 +18,7 @@ class IGPRegression:
         for out_id in range(self.Y_obs.shape[1]):
             single_y = slice_column(self.Y_obs, out_id)
             kernel = self._get_kernel(self.X_obs, self.X_obs)
-            m = GPy.models.GPRegression(self.X_obs, single_y, kernel)
+            m = self._get_model(self.X_obs, single_y, kernel)
             if self.is_zero_noise:
                 m.Gaussian_noise.variance.fix(0)
             m.optimize_restarts(self.num_restarts, verbose=False)
