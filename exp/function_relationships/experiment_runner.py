@@ -6,7 +6,7 @@ from utils import plot_mse_values, plot_all_outputs
 
 class ExperimentRunner:
     def __init__(self, X_obs, Y_obs, X_new, Y_true, kernel_function,
-                 num_restarts=10, num_inducing=None):
+                 num_restarts=10, num_inducing=None, labels=None):
         self.X_obs = X_obs
         self.Y_obs = Y_obs
         self.X_new = X_new
@@ -14,6 +14,7 @@ class ExperimentRunner:
         self.kernel_function = kernel_function
         self.num_restarts = num_restarts
         self.num_inducing = num_inducing
+        self.labels = labels
         self.has_trained_models = False
 
     def _get_model_predictions(self, model_class):
@@ -43,11 +44,11 @@ class ExperimentRunner:
         gpar_means, gpar_vars = gpar_predictions
         igp_means, igp_vars = igp_predictions
 
-        plot_mse_values(gpar_means, igp_means, self.Y_true, figure_id_start=0)
+        plot_mse_values(gpar_means, igp_means, self.Y_true,
+                        figure_id_start=0, initial_labels=self.labels)
         plot_all_outputs(gpar_means, gpar_vars, igp_means, igp_vars,
                          self.X_new, self.Y_true, self.X_obs, self.Y_obs,
-                         figure_id_start=1)
-
+                         figure_id_start=1, initial_labels=self.labels)
         plt.show()
 
     def run(self):

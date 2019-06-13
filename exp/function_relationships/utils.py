@@ -10,6 +10,14 @@ def specify_subplot(out_id):
     return plt.subplot(1, NUM_SUBPLOTS, (out_id % NUM_SUBPLOTS) + 1)
 
 
+def get_visible_index_bool(n, percent_visible):
+    return np.random.rand(n) < (percent_visible / 100)
+
+
+def plot_bar_plot(values, labels):
+    plt.bar(range(len(values)), values, tick_label=labels)
+
+
 def plot_observations(X_obs, Y_obs, out_id):
     single_Y = slice_column(Y_obs, out_id)
     plt.scatter(X_obs, single_Y, color='b', marker='x', label='Observations')
@@ -36,10 +44,19 @@ def plot_truth(X_new, Y_true, out_id):
     plt.plot(X_new, single_Y, label='Truth')
 
 
+def initialize_labels(n, initial_labels):
+    if initial_labels is None:
+        return ['Y{}'.format(i + 1) for i in range(n)]
+    else:
+        return initial_labels
+
+
 def plot_all_outputs(model_means, model_vars, igp_means, igp_vars,
-                     X_new, Y_true, X_obs, Y_obs, figure_id_start=0):
+                     X_new, Y_true, X_obs, Y_obs,
+                     figure_id_start=0, initial_labels=None):
     """Plot all GPAR outputs against: observations, igp, truth."""
-    for out_id in range(Y_true.shape[1]):
+    labels = initialize_labels(Y_true.shape[1], initial_labels)
+    for out_id, label in enumerate(labels):
         plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
         specify_subplot(out_id)
         plot_observations(X_obs, Y_obs, out_id)
@@ -48,16 +65,14 @@ def plot_all_outputs(model_means, model_vars, igp_means, igp_vars,
         plot_truth(X_new, Y_true, out_id)
         if (out_id + 1) % NUM_SUBPLOTS == 0:
             plt.legend(loc='upper left')
-        plt.title('Y{}'.format(out_id + 1))
+        plt.title('{}'.format(label))
         plt.grid(True)
 
 
-def plot_bar_plot(values, labels):
-    plt.bar(range(len(values)), values, tick_label=labels)
-
-
-def plot_mse_values(model_means, igp_means, Y_true, figure_id_start):
-    for out_id in range(Y_true.shape[1]):
+def plot_mse_values(model_means, igp_means, Y_true,
+                    figure_id_start=0, initial_labels=None):
+    labels = initialize_labels(Y_true.shape[1], initial_labels)
+    for out_id, label in enumerate(labels):
         plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
         specify_subplot(out_id)
         single_gpar_means = slice_column(model_means, out_id)
@@ -66,8 +81,4 @@ def plot_mse_values(model_means, igp_means, Y_true, figure_id_start):
         gpar_mse = mse(true_means, single_gpar_means)
         igp_mse = mse(true_means, single_igp_means)
         plot_bar_plot([gpar_mse, igp_mse], ['GPAR', 'IGP'])
-        plt.title('Y{} MSE'.format(out_id + 1))
-
-
-def get_visible_index_bool(n, percent_visible):
-    return np.random.rand(n) < (percent_visible / 100)
+        plt.title('{} MSE'.format(label))

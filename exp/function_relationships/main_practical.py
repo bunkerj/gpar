@@ -20,5 +20,6 @@ X_obs = X_true[visible_index_bool]
 Y_obs = Y_true[visible_index_bool]
 
 # Run experiment
-exp = ExperimentRunner(X_obs, Y_obs, X_true, Y_true, KERNEL_FUNCTION, NUM_RESTARTS)
+exp = ExperimentRunner(X_obs, Y_obs, X_true, Y_true, KERNEL_FUNCTION,
+                       num_restarts=NUM_RESTARTS, labels=labels)
 exp.run()
