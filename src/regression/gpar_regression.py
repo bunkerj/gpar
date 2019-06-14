@@ -13,6 +13,7 @@ class GPARRegression(Regression):
         self.models = models
         self.ordering = ordering
         self.gaussian_process_dict = dict(zip(ordering, models))
+        self.print_ordering()
 
     def get_ordering(self):
         return self.ordering
