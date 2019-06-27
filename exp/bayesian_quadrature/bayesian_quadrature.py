@@ -4,10 +4,15 @@ from src_utils import stack_all_columns
 
 
 class BayesianQuadrature:
+    def __init__(self, global_model):
+        self.global_model = global_model
+
     def get_augmented_input(self, X, m, input_dim):
         if input_dim > 1:
-            means, vars = m.predict(X)
-            Y = means[:(input_dim - 1)]
+            # Augment input for GPAR
+            means, vars = self.global_model.predict(X)
+            ordered_means = means[:, self.global_model.get_ordering()]
+            Y = ordered_means[:, :(input_dim - 1)]
             return stack_all_columns([X, Y])
         else:
             return X
