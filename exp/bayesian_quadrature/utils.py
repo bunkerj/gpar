@@ -12,7 +12,7 @@ def plot_bq_integral_gp_dist(integral_base, integral_bq, integral_std_bq, label)
     plt.plot(x_gauss, y_gauss, label=label)
 
 
-def plot_bq_integrad_truth(custom_func, start, end):
+def plot_bq_integrand_truth(custom_func, start, end):
     n_new = 1000
     X_new = np.linspace(start, end, n_new).reshape((n_new, 1))
     y_single_means_true = custom_func(X_new)

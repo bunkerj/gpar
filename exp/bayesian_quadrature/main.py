@@ -1,18 +1,19 @@
+import GPy
 import numpy as np
 import scipy.integrate as integrate
 from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
-from synthetic_functions import synthetic_functions
+from synthetic_functions import synthetic_functions, noisy_synthetic_functions
 from src_utils import map_and_stack_outputs, slice_column
 from bayesian_quadrature import BayesianQuadrature
 from kernels import get_non_linear_input_dependent_kernel
 from utils import plot_bq_integral_gp_dist, \
-    plot_bq_integrand_gp, plot_bq_integrad_truth
+    plot_bq_integrand_gp, plot_bq_integrand_truth
 
 np.random.seed(17)
 
-NUM_RESTARTS = 10
+NUM_RESTARTS = 35
 FUNCTION_IDX = 0
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 # KERNEL_FUNCTION = lambda X, Y: GPy.kern.RBF(X.shape[1])
@@ -21,7 +22,7 @@ KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 # custom_func = lambda x: np.exp(-(x ** 2) - np.sin(3 * x) ** 2)
 START = 0
 END = 1
-N_OBS = 20
+N_OBS = 50
 TITLE = 'N_OBS: {}'.format(N_OBS)
 
 N_PLOT_ROWS = 2
@@ -29,23 +30,23 @@ N_PLOT_COLS = 3
 
 # Construct synthetic observations
 X_obs = np.linspace(START, END, N_OBS).reshape((N_OBS, 1))
-Y_obs = map_and_stack_outputs(synthetic_functions, X_obs)
+Y_obs = map_and_stack_outputs(noisy_synthetic_functions, X_obs)
 curr_gpar_X_obs = None
 
 # Train GPAR model
-gpar_model = GPARRegression(X_obs, Y_obs,
-                            KERNEL_FUNCTION, is_zero_noise=False)
+gpar_model = GPARRegression(X_obs, Y_obs, KERNEL_FUNCTION,
+                            num_restarts=NUM_RESTARTS, is_zero_noise=False)
 gpar_gps = gpar_model.get_gp_dict()
 ordering = gpar_model.get_ordering()
-gpar_bq = BayesianQuadrature()
+gpar_bq = BayesianQuadrature(gpar_model)
 
 # Train IGP model
-igp_model = IGPRegression(X_obs, Y_obs,
-                          KERNEL_FUNCTION, is_zero_noise=False)
+igp_model = IGPRegression(X_obs, Y_obs, KERNEL_FUNCTION,
+                          num_restarts=NUM_RESTARTS, is_zero_noise=False)
 igp_gps = igp_model.get_gp_models()
-igp_bq = BayesianQuadrature()
+igp_bq = BayesianQuadrature(igp_model)
 
-for idx, out_idx in enumerate([ordering[0]]):
+for idx, out_idx in enumerate(ordering):
     # Set preliminary variables
     m_gpar = gpar_gps[out_idx]
     m_igp = igp_gps[out_idx]
@@ -87,7 +88,7 @@ for idx, out_idx in enumerate([ordering[0]]):
 
     # Create truth vs prediction plot
     plt.subplot(N_PLOT_ROWS, N_PLOT_COLS, idx + 1 + N_PLOT_COLS)
-    plot_bq_integrad_truth(custom_func, START, END)
+    plot_bq_integrand_truth(custom_func, START, END)
     plot_bq_integrand_gp(gpar_model, START, END, 'GPAR Mean', out_idx, display_var=True)
     plot_bq_integrand_gp(m_igp, START, END, 'IGP Mean', out_idx, display_var=False)
     plt.scatter(X_obs, y_single_obs, s=20, marker='x', color='b', label='Observations')
