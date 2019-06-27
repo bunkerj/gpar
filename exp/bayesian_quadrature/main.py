@@ -1,26 +1,27 @@
-import GPy
 import numpy as np
 import scipy.integrate as integrate
+from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
 from synthetic_functions import synthetic_functions
 from src_utils import map_and_stack_outputs, slice_column
-from matplotlib import pyplot as plt
-from utils import bayesian_quadrature, plot_bq_integral_gp_dist, \
+from bayesian_quadrature import BayesianQuadrature
+from kernels import get_non_linear_input_dependent_kernel
+from utils import plot_bq_integral_gp_dist, \
     plot_bq_integrand_gp, plot_bq_integrad_truth
 
 np.random.seed(17)
 
-NUM_RESTARTS = 35
+NUM_RESTARTS = 10
 FUNCTION_IDX = 0
-# KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
-KERNEL_FUNCTION = lambda X, Y: GPy.kern.RBF(X.shape[1])
+KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
+# KERNEL_FUNCTION = lambda X, Y: GPy.kern.RBF(X.shape[1])
 
 # Define function to evaluate
 # custom_func = lambda x: np.exp(-(x ** 2) - np.sin(3 * x) ** 2)
 START = 0
 END = 1
-N_OBS = 10
+N_OBS = 20
 TITLE = 'N_OBS: {}'.format(N_OBS)
 
 N_PLOT_ROWS = 2
@@ -32,35 +33,33 @@ Y_obs = map_and_stack_outputs(synthetic_functions, X_obs)
 curr_gpar_X_obs = None
 
 # Train GPAR model
-# m = GPy.models.GPRegression(X_obs, y_single_obs,
-#                             KERNEL_FUNCTION(X_obs, X_obs))
 gpar_model = GPARRegression(X_obs, Y_obs,
-                            KERNEL_FUNCTION, is_zero_noise=True)
+                            KERNEL_FUNCTION, is_zero_noise=False)
 gpar_gps = gpar_model.get_gp_dict()
 ordering = gpar_model.get_ordering()
-gpar_model.print_ordering()
+gpar_bq = BayesianQuadrature()
 
 # Train IGP model
 igp_model = IGPRegression(X_obs, Y_obs,
                           KERNEL_FUNCTION, is_zero_noise=False)
 igp_gps = igp_model.get_gp_models()
+igp_bq = BayesianQuadrature()
 
-# for i in range(Y_obs.shape[1]):
-for idx, out_idx in enumerate([ordering[0], ordering[1]]):
+for idx, out_idx in enumerate([ordering[0]]):
     # Set preliminary variables
     m_gpar = gpar_gps[out_idx]
     m_igp = igp_gps[out_idx]
     y_single_obs = slice_column(Y_obs, out_idx)
-    custom_func = synthetic_functions[out_idx]
     curr_gpar_X_obs = gpar_model.augment_X(curr_gpar_X_obs, out_idx)
 
     # Get integral through Bayesian Quadrature
     integral_bq_gpar, integral_std_bq_gpar = \
-        bayesian_quadrature(m_gpar, curr_gpar_X_obs, y_single_obs, START, END)
+        gpar_bq.predict(m_gpar, curr_gpar_X_obs, y_single_obs, START, END)
     integral_bq_igp, integral_std_bq_igp = \
-        bayesian_quadrature(m_igp, X_obs, y_single_obs, START, END)
+        igp_bq.predict(m_igp, X_obs, y_single_obs, START, END)
 
     # Approximate integral of function (using standard numerical approach)
+    custom_func = synthetic_functions[out_idx]
     result_base = integrate.quad(custom_func, START, END)
     integral_base = result_base[0]
 
