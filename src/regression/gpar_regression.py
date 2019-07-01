@@ -101,7 +101,7 @@ class GPARRegression(Regression):
         kernel = self._get_kernel(self.X_obs, current_X)
         m = self._get_model(current_X, y, kernel)
         if self.is_zero_noise:
-            m.Gaussian_noise.variance.fix(0)
+            m.Gaussian_noise.variance.fix(0.0001)
         m.optimize_restarts(self.num_restarts, verbose=False)
         return m
 

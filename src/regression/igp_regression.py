@@ -20,7 +20,7 @@ class IGPRegression(Regression):
             kernel = self._get_kernel(self.X_obs, self.X_obs)
             m = self._get_model(self.X_obs, single_y, kernel)
             if self.is_zero_noise:
-                m.Gaussian_noise.variance.fix(0)
+                m.Gaussian_noise.variance.fix(0.0001)
             m.optimize_restarts(self.num_restarts, verbose=False)
             models.append(m)
         return tuple(models)
