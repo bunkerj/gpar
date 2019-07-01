@@ -4,7 +4,7 @@ import scipy.integrate as integrate
 from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
-from synthetic_functions import synthetic_functions, noisy_synthetic_functions
+from synthetic_functions import synthetic_functions
 from src_utils import map_and_stack_outputs, slice_column
 from bayesian_quadrature import BayesianQuadrature
 from kernels import get_non_linear_input_dependent_kernel
@@ -16,13 +16,15 @@ np.random.seed(17)
 NUM_RESTARTS = 35
 FUNCTION_IDX = 0
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
-# KERNEL_FUNCTION = lambda X, Y: GPy.kern.RBF(X.shape[1])
+# KERNEL_FUNCTION = lambda X, Y: GPy.kern.RBF(X.shape[1]) + \
+#                                GPy.kern.StdPeriodic(X.shape[1])
+# KERNEL_FUNCTION = get_linear_input_dependent_kernel
 
 # Define function to evaluate
 # custom_func = lambda x: np.exp(-(x ** 2) - np.sin(3 * x) ** 2)
 START = 0
 END = 1
-N_OBS = 50
+N_OBS = 15
 TITLE = 'N_OBS: {}'.format(N_OBS)
 
 N_PLOT_ROWS = 2
@@ -30,19 +32,19 @@ N_PLOT_COLS = 3
 
 # Construct synthetic observations
 X_obs = np.linspace(START, END, N_OBS).reshape((N_OBS, 1))
-Y_obs = map_and_stack_outputs(noisy_synthetic_functions, X_obs)
+Y_obs = map_and_stack_outputs(synthetic_functions, X_obs)
 curr_gpar_X_obs = None
 
 # Train GPAR model
 gpar_model = GPARRegression(X_obs, Y_obs, KERNEL_FUNCTION,
-                            num_restarts=NUM_RESTARTS, is_zero_noise=False)
+                            num_restarts=NUM_RESTARTS, is_zero_noise=True)
 gpar_gps = gpar_model.get_gp_dict()
 ordering = gpar_model.get_ordering()
 gpar_bq = BayesianQuadrature(gpar_model)
 
 # Train IGP model
 igp_model = IGPRegression(X_obs, Y_obs, KERNEL_FUNCTION,
-                          num_restarts=NUM_RESTARTS, is_zero_noise=False)
+                          num_restarts=NUM_RESTARTS, is_zero_noise=True)
 igp_gps = igp_model.get_gp_models()
 igp_bq = BayesianQuadrature(igp_model)
 
