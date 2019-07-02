@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import stats
 from numpy import sin, cos, pi, exp, sqrt
 from src_utils import concat_right_column
 
@@ -78,3 +79,17 @@ def y_exp2(X, is_noisy):
             Y[idx, 2] += np.sin(2 * np.pi * noise_matrix[idx, 0]) + noise_matrix[idx, 1]
             Y[idx, 3] += np.sin(2 * np.pi * X[idx]) * noise_matrix[idx, 0] + noise_matrix[idx, 1]
     return Y
+
+
+# ------------------------------ Misc ------------------------------ #
+
+
+def bessel_integrand(n, x, t):
+    return (1 / np.pi) * np.cos(n * t - x * np.sin(t))
+
+
+norm1 = lambda x: stats.norm.pdf(x, 0, 1)
+norm2 = lambda x: stats.norm.pdf(x, 0, 2)
+norm3 = lambda x: stats.norm.pdf(x, 0, 4)
+
+gaussian_functions = (norm1, norm2, norm3)
