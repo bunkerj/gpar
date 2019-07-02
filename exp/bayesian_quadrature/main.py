@@ -4,7 +4,7 @@ import scipy.integrate as integrate
 from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
-from synthetic_functions import synthetic_functions
+from synthetic_functions import synthetic_functions, gaussian_functions
 from src_utils import map_and_stack_outputs, slice_column
 from bayesian_quadrature import BayesianQuadrature
 from kernels import get_non_linear_input_dependent_kernel
@@ -16,14 +16,8 @@ np.random.seed(17)
 NUM_RESTARTS = 35
 FUNCTION_IDX = 0
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
-# KERNEL_FUNCTION = lambda X, Y: GPy.kern.RBF(X.shape[1]) + \
-#                                GPy.kern.StdPeriodic(X.shape[1])
-# KERNEL_FUNCTION = get_linear_input_dependent_kernel
-
-# Define function to evaluate
-# custom_func = lambda x: np.exp(-(x ** 2) - np.sin(3 * x) ** 2)
-START = 0
-END = 1
+START = -5
+END = 2
 N_OBS = 15
 TITLE = 'N_OBS: {}'.format(N_OBS)
 
@@ -32,7 +26,7 @@ N_PLOT_COLS = 3
 
 # Construct synthetic observations
 X_obs = np.linspace(START, END, N_OBS).reshape((N_OBS, 1))
-Y_obs = map_and_stack_outputs(synthetic_functions, X_obs)
+Y_obs = map_and_stack_outputs(gaussian_functions, X_obs)
 curr_gpar_X_obs = None
 
 # Train GPAR model
@@ -62,13 +56,12 @@ for idx, out_idx in enumerate(ordering):
         igp_bq.predict(m_igp, X_obs, y_single_obs, START, END)
 
     # Approximate integral of function (using standard numerical approach)
-    custom_func = synthetic_functions[out_idx]
+    custom_func = gaussian_functions[out_idx]
     result_base = integrate.quad(custom_func, START, END)
     integral_base = result_base[0]
 
     # Print numerical indicators
     print('\n--------------- Y{} ---------------'.format(out_idx + 1))
-    print(m_gpar)
     print('Parameters: {}'.format(m_gpar.kern.param_array))
     print('Approx value: {}'.format(float(integral_base)))
     print('\nGPAR BQ mean: {}'.format(float(integral_bq_gpar)))
