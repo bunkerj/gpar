@@ -88,8 +88,7 @@ def bessel_integrand(n, x, t):
     return (1 / np.pi) * np.cos(n * t - x * np.sin(t))
 
 
-norm1 = lambda x: stats.norm.pdf(x, 0, 1)
-norm2 = lambda x: stats.norm.pdf(x, 0, 2)
-norm3 = lambda x: stats.norm.pdf(x, 0, 4)
-
-gaussian_functions = (norm1, norm2, norm3)
+gaussian_functions = (
+    lambda x: stats.norm.pdf(x, 0, 1),
+    lambda x: stats.norm.pdf(x, 0, 2),
+    lambda x: stats.norm.pdf(x, 0, 4))

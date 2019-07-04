@@ -13,15 +13,15 @@ from utils import plot_bq_integral_gp_dist, \
 
 np.random.seed(17)
 
-NUM_RESTARTS = 35
+NUM_RESTARTS = 30
 FUNCTION_IDX = 0
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
-START = -5
-END = 2
+START = -12
+END = 12
 N_OBS = 15
-TITLE = 'N_OBS: {}'.format(N_OBS)
+TITLE = 'Number of Observations: {}'.format(N_OBS)
 
-N_PLOT_ROWS = 2
+N_PLOT_ROWS = 3
 N_PLOT_COLS = 3
 
 # Construct synthetic observations
@@ -79,7 +79,7 @@ for idx, out_idx in enumerate(ordering):
     plt.axvline(integral_bq_gpar, color='b', label='GPAR BQ Mean', linestyle='--')
     plt.axvline(integral_bq_igp, color='g', label='IGP BQ Mean', linestyle='--')
     if idx + 1 == N_PLOT_COLS:
-        plt.legend(loc='upper left')
+        plt.legend(loc='upper right')
 
     # Create truth vs prediction plot
     plt.subplot(N_PLOT_ROWS, N_PLOT_COLS, idx + 1 + N_PLOT_COLS)
@@ -87,7 +87,15 @@ for idx, out_idx in enumerate(ordering):
     plot_bq_integrand_gp(gpar_model, START, END, 'GPAR Mean', out_idx, display_var=True)
     plot_bq_integrand_gp(m_igp, START, END, 'IGP Mean', out_idx, display_var=False)
     plt.scatter(X_obs, y_single_obs, s=20, marker='x', color='b', label='Observations')
-    if idx + 1 + N_PLOT_COLS == N_PLOT_ROWS * N_PLOT_COLS:
-        plt.legend(loc='upper left')
+    if idx + 1 + N_PLOT_COLS == 2 * N_PLOT_COLS:
+        plt.legend(loc='upper right')
+
+    # Create IGP vs GPAR error comparison plots
+    plt.subplot(N_PLOT_ROWS, N_PLOT_COLS, idx + 1 + 2 * N_PLOT_COLS)
+    abs_error_igp = np.abs(float(integral_base) - float(integral_bq_igp))
+    abs_error_gpar = np.abs(float(integral_base) - float(integral_bq_gpar))
+    errors = [abs_error_igp, abs_error_gpar]
+    labels = ['IGP Abs Error', 'GPAR Abs Error']
+    plt.bar(range(len(errors)), errors, tick_label=labels)
 
 plt.show()
