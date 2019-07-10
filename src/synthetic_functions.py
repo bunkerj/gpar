@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import stats
+from scipy import stats, special
 from numpy import sin, cos, pi, exp, sqrt
 from src_utils import concat_right_column
 
@@ -28,12 +28,12 @@ def y3_exp1(x):
     return y2_exp1(x) * (y1_exp1(x) ** 2) + 3 * x
 
 
-y1_exp1_noisy = add_noise(y1_exp1)
-y2_exp1_noisy = add_noise(y2_exp1)
-y3_exp1_noisy = add_noise(y3_exp1)
-
 synthetic_functions = (y1_exp1, y2_exp1, y3_exp1)
-noisy_synthetic_functions = (y1_exp1_noisy, y2_exp1_noisy, y3_exp1_noisy)
+
+noisy_synthetic_functions = (
+    lambda x: add_noise(synthetic_functions[0]),
+    lambda x: add_noise(synthetic_functions[0]),
+    lambda x: add_noise(synthetic_functions[0]))
 
 
 # ------------------------------ Noise Structure ------------------------------ #
@@ -88,7 +88,34 @@ def bessel_integrand(n, x, t):
     return (1 / np.pi) * np.cos(n * t - x * np.sin(t))
 
 
+bessel_integrands = (
+    lambda x: bessel_integrand(0, x, 10),
+    lambda x: bessel_integrand(1, x, 10),
+    lambda x: bessel_integrand(2, x, 10))
+
+bessel_functions = (
+    lambda x: special.jv(0, x),
+    lambda x: special.jv(1, x),
+    lambda x: special.jv(2, x))
+
+struve_functions = (
+    lambda x: special.struve(0, x),
+    lambda x: special.struve(1, x),
+    lambda x: special.struve(2, x))
+
+# gaussian_functions = (
+#     lambda x: stats.norm.pdf(x, 0, 1),
+#     lambda x: stats.norm.pdf(x, 0, 2),
+#     lambda x: stats.norm.pdf(x, 0, 4))
+
+
 gaussian_functions = (
     lambda x: stats.norm.pdf(x, 0, 1),
-    lambda x: stats.norm.pdf(x, 0, 2),
-    lambda x: stats.norm.pdf(x, 0, 4))
+    lambda x: stats.norm.pdf(x, 0, 1),
+    lambda x: stats.norm.pdf(x, 0, 1))
+
+custom_functions = (
+    lambda x: 3 * x + x ** 0.5 + np.sin(10 * x) + 5,
+    lambda x: 3 * x + np.sin(10 * x) + 5,
+    lambda x: x ** 0.5 + np.cos(10 * x) + 10
+)
