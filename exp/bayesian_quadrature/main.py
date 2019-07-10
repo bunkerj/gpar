@@ -4,29 +4,28 @@ import scipy.integrate as integrate
 from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
-from synthetic_functions import synthetic_functions, gaussian_functions
+from synthetic_functions import gaussian_functions
 from src_utils import map_and_stack_outputs, slice_column
 from bayesian_quadrature import BayesianQuadrature
-from kernels import get_non_linear_input_dependent_kernel
 from utils import plot_bq_integral_gp_dist, \
     plot_bq_integrand_gp, plot_bq_integrand_truth
 
 np.random.seed(17)
 
 NUM_RESTARTS = 30
-FUNCTION_IDX = 0
-KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
-START = -12
-END = 12
-N_OBS = 15
+KERNEL_FUNCTION = lambda x, y: GPy.kern.RBF(1)
+START = -5
+END = 0.5
+N_OBS = 50
 TITLE = 'Number of Observations: {}'.format(N_OBS)
+FUNCTIONS = gaussian_functions
 
 N_PLOT_ROWS = 3
 N_PLOT_COLS = 3
 
 # Construct synthetic observations
 X_obs = np.linspace(START, END, N_OBS).reshape((N_OBS, 1))
-Y_obs = map_and_stack_outputs(gaussian_functions, X_obs)
+Y_obs = map_and_stack_outputs(FUNCTIONS, X_obs)
 curr_gpar_X_obs = None
 
 # Train GPAR model
@@ -50,13 +49,17 @@ for idx, out_idx in enumerate(ordering):
     curr_gpar_X_obs = gpar_model.augment_X(curr_gpar_X_obs, out_idx)
 
     # Get integral through Bayesian Quadrature
+    print('Computing GPAR integral for Y{}...'.format(out_idx + 1))
     integral_bq_gpar, integral_std_bq_gpar = \
         gpar_bq.predict(m_gpar, curr_gpar_X_obs, y_single_obs, START, END)
+    print('Done')
+    print('Computing IGP integral for Y{}...'.format(out_idx + 1))
     integral_bq_igp, integral_std_bq_igp = \
         igp_bq.predict(m_igp, X_obs, y_single_obs, START, END)
+    print('Done')
 
     # Approximate integral of function (using standard numerical approach)
-    custom_func = gaussian_functions[out_idx]
+    custom_func = FUNCTIONS[out_idx]
     result_base = integrate.quad(custom_func, START, END)
     integral_base = result_base[0]
 
@@ -67,7 +70,7 @@ for idx, out_idx in enumerate(ordering):
     print('\nGPAR BQ mean: {}'.format(float(integral_bq_gpar)))
     print('GPAR BQ std: {}'.format(float(integral_std_bq_gpar)))
     print('\nIGP BQ mean: {}'.format(float(integral_bq_igp)))
-    print('IGP BQ std: {}'.format(float(integral_std_bq_igp)))
+    print('IGP BQ std: {}\n'.format(float(integral_std_bq_igp)))
 
     plt.suptitle(TITLE)
 

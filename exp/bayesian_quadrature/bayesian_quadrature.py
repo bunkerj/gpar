@@ -7,6 +7,9 @@ class BayesianQuadrature:
     def __init__(self, global_model):
         self.global_model = global_model
 
+    def integrate_monte_carlo(self, integrand, bounds, args, n_points=10000):
+        pass
+
     def get_augmented_input(self, X, m, input_dim):
         if input_dim > 1:
             # Augment input for GPAR
