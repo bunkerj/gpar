@@ -1,6 +1,6 @@
 import numpy as np
 from synthetic_functions import y_exp2
-from kernels import get_linear_input_dependent_kernel
+from kernels import full_RBF
 from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from src_utils import stack_all_columns
@@ -13,7 +13,7 @@ N_OBS = 150
 N_NEW = 100000
 NUM_RESTARTS = 50
 X_VALUES = [0.2, 0.5, 1.7]
-KERNEL_FUNCTION = get_linear_input_dependent_kernel
+KERNEL_FUNCTION = full_RBF
 
 for scheme_idx in [0, 1, 2]:
     # Construct observations
