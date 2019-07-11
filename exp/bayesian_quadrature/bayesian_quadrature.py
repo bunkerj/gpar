@@ -13,7 +13,7 @@ class BayesianQuadrature:
     def get_augmented_input(self, X, m, input_dim):
         if input_dim > 1:
             # Augment input for GPAR
-            means, vars = self.global_model.predict(X)
+            means, vars = self.global_model.predict_f(X)
             ordered_means = means[:, self.global_model.get_ordering()]
             Y = ordered_means[:, :(input_dim - 1)]
             return stack_all_columns([X, Y])
@@ -25,7 +25,7 @@ class BayesianQuadrature:
         input_dim = fixed_input.shape[1]
         X = np.array(raw_input).reshape((1, 1))
         X_aug = self.get_augmented_input(X, m, input_dim)
-        return m.kern.K(X_aug, fixed_input)
+        return m.kern.compute_K_symm(X_aug, fixed_input)
 
     def double_integrand(self, *args):
         raw_input1, raw_input2, m, input_dim = args
@@ -33,7 +33,7 @@ class BayesianQuadrature:
         input2 = np.array(raw_input2).reshape((1, 1))
         input1_aug = self.get_augmented_input(input1, m, input_dim)
         input2_aug = self.get_augmented_input(input2, m, input_dim)
-        return m.kern.K(input1_aug, input2_aug)
+        return m.kern.compute_K_symm(input1_aug, input2_aug)
 
     def get_precision_matrix(self, m, X_obs):
         n = X_obs.shape[0]
@@ -41,11 +41,11 @@ class BayesianQuadrature:
         C = np.zeros((n, n))
         for i in range(n):
             for j in range(i, n):
-                cov = m.kern.K(X_obs[i].reshape((1, input_dim)),
-                               X_obs[j].reshape((1, input_dim)))
+                cov = m.kern.compute_K_symm(X_obs[i].reshape((1, input_dim)),
+                                            X_obs[j].reshape((1, input_dim)))
                 C[i, j] = cov
                 C[j, i] = cov
-        return np.linalg.pinv(C + np.eye(n, n) * m.Gaussian_noise.variance)
+        return np.linalg.pinv(C + np.eye(n) * m.kern.variance.value)
 
     def get_integration_bounds(self, start, end):
         bounds = [[start, end]]
@@ -69,7 +69,7 @@ class BayesianQuadrature:
         result = integrate.nquad(self.double_integrand, double_bounds, args=(m, input_dim))
         return result[0]
 
-    def predict(self, m, X_obs, y_single_obs, start, end):
+    def predict_f(self, m, X_obs, y_single_obs, start, end):
         kernel_int_vect = self.get_kernel_integral_values(X_obs, m, start, end)
         c = self.get_kernel_integral_constant(X_obs, m, start, end)
         C_inv = self.get_precision_matrix(m, X_obs)

@@ -1,4 +1,3 @@
-import GPy
 import numpy as np
 import scipy.integrate as integrate
 from matplotlib import pyplot as plt
@@ -6,14 +5,14 @@ from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
 from synthetic_functions import gaussian_functions
 from src_utils import map_and_stack_outputs, slice_column
+from kernels import full_RBF
 from bayesian_quadrature import BayesianQuadrature
-from utils import plot_bq_integral_gp_dist, \
-    plot_bq_integrand_gp, plot_bq_integrand_truth
+from utils import *
 
 np.random.seed(17)
 
 NUM_RESTARTS = 30
-KERNEL_FUNCTION = lambda x, y: GPy.kern.RBF(1)
+KERNEL_FUNCTION = full_RBF
 START = -5
 END = 0.5
 N_OBS = 50
@@ -51,11 +50,11 @@ for idx, out_idx in enumerate(ordering):
     # Get integral through Bayesian Quadrature
     print('Computing GPAR integral for Y{}...'.format(out_idx + 1))
     integral_bq_gpar, integral_std_bq_gpar = \
-        gpar_bq.predict(m_gpar, curr_gpar_X_obs, y_single_obs, START, END)
+        gpar_bq.predict_f(m_gpar, curr_gpar_X_obs, y_single_obs, START, END)
     print('Done')
     print('Computing IGP integral for Y{}...'.format(out_idx + 1))
     integral_bq_igp, integral_std_bq_igp = \
-        igp_bq.predict(m_igp, X_obs, y_single_obs, START, END)
+        igp_bq.predict_f(m_igp, X_obs, y_single_obs, START, END)
     print('Done')
 
     # Approximate integral of function (using standard numerical approach)
@@ -65,7 +64,7 @@ for idx, out_idx in enumerate(ordering):
 
     # Print numerical indicators
     print('\n--------------- Y{} ---------------'.format(out_idx + 1))
-    print('Parameters: {}'.format(m_gpar.kern.param_array))
+    print('Parameters: {}'.format(extract_param_list(m_gpar)))
     print('Approx value: {}'.format(float(integral_base)))
     print('\nGPAR BQ mean: {}'.format(float(integral_bq_gpar)))
     print('GPAR BQ std: {}'.format(float(integral_std_bq_gpar)))

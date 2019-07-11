@@ -36,12 +36,12 @@ def true_predictor(Y_true):
 
 def gpar_predictor(Y):
     m = GPARRegression(X_obs, Y, KERNEL_FUNCTION, num_restarts=NUM_RESTARTS)
-    return m.predict(X)
+    return m.predict_f(X)
 
 
 def igp_predictor(Y):
     igp_model = IGPRegression(X_obs, Y, KERNEL_FUNCTION, num_restarts=NUM_RESTARTS)
-    return igp_model.predict(X)
+    return igp_model.predict_f(X)
 
 
 noise_true = get_prediction_noise(Y_true_noisy, true_predictor, split_output_true)

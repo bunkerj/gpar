@@ -120,7 +120,7 @@ class GPARRegression(Regression):
                 result = concat_right_column(result, data)
         return result
 
-    def predict(self, X_new):
+    def predict_f(self, X_new):
         """Preform prediction using the conditional ordering."""
         current_X = X_new
         mean_dict = {}

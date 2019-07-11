@@ -22,7 +22,7 @@ class ExperimentRunner:
         model = model_class(self.X_obs, self.Y_obs, self.kernel_function,
                             num_restarts=self.num_restarts,
                             num_inducing=self.num_inducing)
-        return model.predict(self.X_new)
+        return model.predict_f(self.X_new)
 
     def _get_gpar_predictions(self):
         return self._get_model_predictions(GPARRegression)

@@ -4,6 +4,14 @@ from matplotlib import pyplot as plt
 from src_utils import slice_column
 
 
+def slice_if_needed(data, out_idx):
+    return slice_column(data, out_idx) if data.shape[1] > 1 else data
+
+
+def extract_param_list(model):
+    return [float(param.value) for param in model.kern.params]
+
+
 def plot_bq_integral_gp_dist(integral_base, integral_bq, integral_std_bq, label):
     ub = np.max((integral_base + 0.25, integral_bq + 2 * integral_std_bq))
     lb = np.min((integral_base - 0.25, integral_bq - 2 * integral_std_bq))
@@ -19,14 +27,10 @@ def plot_bq_integrand_truth(custom_func, start, end):
     plt.plot(X_new, y_single_means_true, label='True Function')
 
 
-def slice_if_needed(data, out_idx):
-    return slice_column(data, out_idx) if data.shape[1] > 1 else data
-
-
-def plot_bq_integrand_gp(m, start, end, label, out_idx, display_var=False):
+def plot_bq_integrand_gp(model, start, end, label, out_idx, display_var=False):
     n_new = 1000
     X_new = np.linspace(start, end, n_new).reshape((n_new, 1))
-    means_pred, vars_pred = m.predict(X_new)
+    means_pred, vars_pred = model.predict_f(X_new)
 
     y_single_means_pred = slice_if_needed(means_pred, out_idx)
     y_single_vars_pred = slice_if_needed(vars_pred, out_idx)

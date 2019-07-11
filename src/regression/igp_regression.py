@@ -29,7 +29,7 @@ class IGPRegression(Regression):
             models.append(m)
         return tuple(models)
 
-    def predict(self, X_new):
+    def predict_f(self, X_new):
         stacked_means = None
         stacked_vars = None
         for out_id in range(self.Y_obs.shape[1]):

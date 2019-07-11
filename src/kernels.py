@@ -42,3 +42,8 @@ def get_non_linear_input_dependent_kernel(original_X, current_X):
     k2 = RationalQuadratic(input_dim=X_dim + Y_dim,
                            active_dims=list(range(0, X_dim + Y_dim)))
     return k1 + k2
+
+
+def full_RBF(original_X, current_X):
+    X_dim = current_X.shape[1]
+    return RBF(input_dim=X_dim, active_dims=list(range(X_dim)))
