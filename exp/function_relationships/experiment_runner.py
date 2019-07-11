@@ -7,10 +7,10 @@ from utils import plot_mse_values, plot_all_outputs
 class ExperimentRunner:
     def __init__(self, X_obs, Y_obs, X_new, Y_true, kernel_function,
                  num_restarts=10, num_inducing=None, labels=None):
-        self.X_obs = X_obs
-        self.Y_obs = Y_obs
-        self.X_new = X_new
-        self.Y_true = Y_true
+        self.X_obs = X_obs.astype(float)
+        self.Y_obs = Y_obs.astype(float)
+        self.X_new = X_new.astype(float)
+        self.Y_true = Y_true.astype(float)
         self.kernel_function = kernel_function
         self.num_restarts = num_restarts
         self.num_inducing = num_inducing

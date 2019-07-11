@@ -1,14 +1,16 @@
+import gpflow
 from regression.regression import Regression
 from src_utils import should_update_max, slice_column, concat_right_column
 
 
 class GPARRegression(Regression):
-    def __init__(self, X, Y, kernel_function, manual_ordering=None,
-                 num_restarts=10, is_zero_noise=False, num_inducing=None):
+    def __init__(self, X, Y, kernel_function, manual_ordering=None, num_restarts=10,
+                 is_zero_noise=False, num_inducing=None, init_likelihood_var=0.0001):
         super().__init__(X, Y, kernel_function,
                          num_restarts=num_restarts,
                          is_zero_noise=is_zero_noise,
-                         num_inducing=num_inducing)
+                         num_inducing=num_inducing,
+                         init_likelihood_var=init_likelihood_var)
         models, ordering = self._get_models_and_ordering(manual_ordering)
         self.models = models
         self.ordering = ordering
@@ -89,7 +91,7 @@ class GPARRegression(Regression):
         max_log_likelihood_model = None
         for out_id in remaining_output_ids:
             m = self._get_trained_gp_model(current_X, out_id)
-            log_likelihood = m.log_likelihood()
+            log_likelihood = m.compute_log_likelihood()
             if should_update_max(max_log_likelihood_value, log_likelihood):
                 max_log_likelihood_id = out_id
                 max_log_likelihood_value = log_likelihood
@@ -100,9 +102,11 @@ class GPARRegression(Regression):
         y = slice_column(self.Y_obs, out_id)
         kernel = self._get_kernel(self.X_obs, current_X)
         m = self._get_model(current_X, y, kernel)
+        m.likelihood.variance = self.init_likelihood_var
         if self.is_zero_noise:
-            m.Gaussian_noise.variance.fix(0.0001)
-        m.optimize_restarts(self.num_restarts, verbose=False)
+            m.likelihood.variance = 0.00001
+            m.likelihood.variance.trainable = False
+        gpflow.train.ScipyOptimizer().minimize(m)
         return m
 
     def _stack_in_order(self, data_dict):
@@ -123,7 +127,7 @@ class GPARRegression(Regression):
         var_dict = {}
         for out_id in self.ordering:
             m = self.gaussian_process_dict[out_id]
-            mean, var = m.predict(current_X)
+            mean, var = m.predict_f(current_X)
             current_X = concat_right_column(current_X, mean)
             mean_dict[out_id] = mean
             var_dict[out_id] = var
@@ -131,4 +135,4 @@ class GPARRegression(Regression):
 
     def predict_single_output(self, X_new, out_id):
         m = self.gaussian_process_dict[out_id]
-        return m.predict(X_new)
+        return m.predict_f(X_new)
