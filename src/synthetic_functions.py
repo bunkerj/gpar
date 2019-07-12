@@ -31,9 +31,9 @@ def y3_exp1(x):
 synthetic_functions = (y1_exp1, y2_exp1, y3_exp1)
 
 noisy_synthetic_functions = (
-    lambda x: add_noise(synthetic_functions[0]),
-    lambda x: add_noise(synthetic_functions[0]),
-    lambda x: add_noise(synthetic_functions[0]))
+    add_noise(synthetic_functions[0]),
+    add_noise(synthetic_functions[1]),
+    add_noise(synthetic_functions[2]))
 
 
 # ------------------------------ Noise Structure ------------------------------ #
