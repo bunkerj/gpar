@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
-from utils import plot_mse_values, plot_all_outputs
+from exp.function_relationships.utils import plot_mse_values, plot_all_outputs
 
 
 class ExperimentRunner:
