@@ -1,7 +1,7 @@
 import numpy as np
-from kernels import get_exponential_decay_kernel
-from exp.function_relationships.experiment_runner import ExperimentRunner
 from exp.freeze_thaw.model_aggregator import ModelAggregator
+from exp.function_relationships.experiment_runner import ExperimentRunner
+from kernels import get_exponential_decay_kernel
 
 N_OBS = 5
 N_EPOCHS = 7

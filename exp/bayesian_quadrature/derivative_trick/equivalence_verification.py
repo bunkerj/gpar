@@ -1,9 +1,9 @@
 import gpflow
 import numpy as np
 from scipy import integrate
-from utils import predict_integral, execute_tensor
-from synthetic_functions import gaussian_pdf
-from kernels import RBF_dd
+from exp.bayesian_quadrature.derivative_trick.utils import predict_integral, execute_tensor
+from exp.bayesian_quadrature.derivative_trick.synthetic_functions import gaussian_pdf
+from exp.bayesian_quadrature.derivative_trick.kernels import RBF_dd
 
 NOISE = 0.0001
 

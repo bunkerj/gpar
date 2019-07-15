@@ -4,7 +4,8 @@ from synthetic_functions import y_exp2
 from kernels import get_non_linear_input_dependent_kernel
 from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
-from utils import plot_noise, get_split_outputs, get_prediction_noise
+from exp.noise_structure.utils import plot_noise, \
+    get_split_outputs, get_prediction_noise
 
 NUM_RESTARTS = 10
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel

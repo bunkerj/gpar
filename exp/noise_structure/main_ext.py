@@ -4,8 +4,8 @@ from kernels import full_RBF
 from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from src_utils import stack_all_columns
-from utils import get_split_outputs, plot_noise_histogram, \
-    get_igp_output_samples, get_gpar_output_samples
+from exp.noise_structure.utils import get_split_outputs, \
+    plot_noise_histogram, get_igp_output_samples, get_gpar_output_samples
 
 START = 0
 END = 2

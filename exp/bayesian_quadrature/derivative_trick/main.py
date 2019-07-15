@@ -1,10 +1,11 @@
 import gpflow
 import numpy as np
-from kernels import RBF_dd
 from scipy import integrate, stats
 from matplotlib import pyplot as plt
-from synthetic_functions import gaussian_pdf
-from utils import predict_integral, plot_gp_vs_truth, plot_gaussian
+from exp.bayesian_quadrature.derivative_trick.kernels import RBF_dd
+from exp.bayesian_quadrature.derivative_trick.synthetic_functions import gaussian_pdf
+from exp.bayesian_quadrature.derivative_trick.utils \
+    import predict_integral, plot_gp_vs_truth, plot_gaussian
 
 START = -10
 END = 10

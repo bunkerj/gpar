@@ -1,13 +1,11 @@
-import numpy as np
 import scipy.integrate as integrate
-from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from regression.igp_regression import IGPRegression
 from synthetic_functions import gaussian_functions
-from src_utils import map_and_stack_outputs, slice_column
+from src_utils import map_and_stack_outputs
 from kernels import full_RBF
-from bayesian_quadrature import BayesianQuadrature
-from utils import *
+from exp.bayesian_quadrature.base_line.bayesian_quadrature import BayesianQuadrature
+from exp.bayesian_quadrature.base_line.utils import *
 
 np.random.seed(17)
 

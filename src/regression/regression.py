@@ -1,4 +1,4 @@
-from gpflow.models import GPR, SGPR
+from gpflow.models import GPR
 
 
 class Regression:

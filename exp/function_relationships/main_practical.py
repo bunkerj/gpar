@@ -1,7 +1,7 @@
 import numpy as np
-from utils import get_visible_index_bool
 from data_loader import get_processed_data
 from kernels import get_non_linear_input_dependent_kernel
+from exp.function_relationships.utils import get_visible_index_bool
 from exp.function_relationships.experiment_runner import ExperimentRunner
 
 np.random.seed(17)

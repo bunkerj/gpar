@@ -1,6 +1,5 @@
-import gpflow
 import numpy as np
-from kernels import RBF_dd
+from exp.bayesian_quadrature.derivative_trick.kernels import RBF_dd
 from matplotlib import pyplot as plt
 from gpflow.kernels import Matern12, Matern32, Matern52, \
     RBF, Constant, Linear, Cosine
