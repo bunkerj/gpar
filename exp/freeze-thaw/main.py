@@ -1,9 +1,9 @@
 import gpflow
 import numpy as np
+from evaluation import mse
 from matplotlib import pyplot as plt
-from exp_decay_kernel import ExponentialDecay
-from utils import mse
 from model_aggregator import ModelAggregator
+from exp_decay_kernel import ExponentialDecay
 
 N_OBS = 5
 N_EPOCHS = 10

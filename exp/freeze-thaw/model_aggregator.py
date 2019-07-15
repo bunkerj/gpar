@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from utils import stack_all_columns
+from src_utils import stack_all_columns
 
 
 class ModelAggregator:
