@@ -4,8 +4,8 @@ from regression.igp_regression import IGPRegression
 from synthetic_functions import gaussian_functions
 from src_utils import map_and_stack_outputs
 from kernels import full_RBF
-from exp.bayesian_quadrature.base_line.bayesian_quadrature import BayesianQuadrature
-from exp.bayesian_quadrature.base_line.utils import *
+from exp.bayesian_quadrature.baseline.bayesian_quadrature import BayesianQuadrature
+from exp.bayesian_quadrature.baseline.utils import *
 
 np.random.seed(17)
 

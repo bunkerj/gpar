@@ -39,3 +39,12 @@ def map_and_stack_outputs(funcs, X):
         single_Y = map_to_col_vector(f, X)
         Y = single_Y if Y is None else concat_right_column(Y, single_Y)
     return Y
+
+
+def sample_from_bounds(bounds_list):
+    sample = []
+    for bounds in bounds_list:
+        high = bounds[1]
+        low = bounds[0]
+        sample.append(np.random.randint(low, high + 1))
+    return tuple(sample)

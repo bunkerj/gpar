@@ -1,27 +1,20 @@
 import numpy as np
 from time import time
 from matplotlib import pyplot as plt
+from src_utils import sample_from_bounds
 from exp.freeze_thaw.model_aggregator import ModelAggregator
 
 
 class RandomSearch:
     def __init__(self, hyp_ranges, n_samples, n_epochs):
-        self.hyp_ranges = hyp_ranges
+        self.hyp_bounds_list = hyp_ranges
         self.n_samples = n_samples
         self.n_epochs = n_epochs
         self.min_losses = np.array([]).reshape((-1, 1))
         self.training_time = 0
 
-    def _sample_hyp_config(self):
-        hyp_config = []
-        for hyp_range in self.hyp_ranges:
-            high = hyp_range[1]
-            low = hyp_range[0]
-            hyp_config.append(np.random.randint(low, high + 1))
-        return tuple(hyp_config)
-
     def _get_hyp_configs(self):
-        return [self._sample_hyp_config() for _ in range(self.n_samples)]
+        return [sample_from_bounds(self.hyp_bounds_list) for _ in range(self.n_samples)]
 
     def _get_min_loss(self, losses):
         return np.min(losses, axis=1).reshape((-1, 1))
