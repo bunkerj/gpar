@@ -43,6 +43,7 @@ class ModelAggregator:
         return keras.Sequential(components)
 
     def get_all_losses(self):
+        """Returns NxM matrix for N epochs and M models."""
         losses = []
         for history in self.histories:
             losses.append(np.array(history['loss']).reshape((-1, 1)))
