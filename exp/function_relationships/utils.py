@@ -3,11 +3,15 @@ from evaluation import mse
 from matplotlib import pyplot as plt
 from src_utils import slice_column
 
-NUM_SUBPLOTS = 3
+
+def get_num_subplots(plot_shape):
+    return plot_shape[0] * plot_shape[1]
 
 
-def specify_subplot(out_id):
-    return plt.subplot(1, NUM_SUBPLOTS, (out_id % NUM_SUBPLOTS) + 1)
+def specify_plot_location(out_id, figure_id_start, plot_shape):
+    num_subplots = get_num_subplots(plot_shape)
+    plt.figure(figure_id_start + (out_id // num_subplots))
+    plt.subplot(plot_shape[0], plot_shape[1], (out_id % num_subplots) + 1)
 
 
 def get_visible_index_bool(n, percent_visible):
@@ -53,28 +57,26 @@ def initialize_labels(n, initial_labels):
 
 def plot_all_outputs(model_means, model_vars, igp_means, igp_vars,
                      X_new, Y_true, X_obs, Y_obs,
-                     figure_id_start=0, initial_labels=None):
+                     figure_id_start=0, initial_labels=None, plot_shape=(1, 3)):
     """Plot all GPAR outputs against: observations, igp, truth."""
     labels = initialize_labels(Y_true.shape[1], initial_labels)
     for out_id, label in enumerate(labels):
-        plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
-        specify_subplot(out_id)
+        specify_plot_location(out_id, figure_id_start, plot_shape)
         plot_observations(X_obs, Y_obs, out_id)
         plot_single_output(X_new, model_means, model_vars, out_id, 'GPAR', True)
         plot_single_output(X_new, igp_means, igp_vars, out_id, 'IGP', False)
         plot_truth(X_new, Y_true, out_id)
-        if (out_id + 1) % NUM_SUBPLOTS == 0:
+        if (out_id + 1) % get_num_subplots(plot_shape) == 0:
             plt.legend(loc='upper left')
         plt.title('{}'.format(label))
         plt.grid(True)
 
 
 def plot_mse_values(model_means, igp_means, Y_true,
-                    figure_id_start=0, initial_labels=None):
+                    figure_id_start=0, initial_labels=None, plot_shape=(1, 3)):
     labels = initialize_labels(Y_true.shape[1], initial_labels)
     for out_id, label in enumerate(labels):
-        plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
-        specify_subplot(out_id)
+        specify_plot_location(out_id, figure_id_start, plot_shape)
         single_gpar_means = slice_column(model_means, out_id)
         single_igp_means = slice_column(igp_means, out_id)
         true_means = slice_column(Y_true, out_id)
