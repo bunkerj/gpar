@@ -30,7 +30,7 @@ class ModelAggregator:
         model.compile(optimizer='adam',
                       loss='sparse_categorical_crossentropy',
                       metrics=['accuracy'])
-        history = model.fit(self.train_images, self.train_labels,
+        history = model.fit(self.train_images, self.train_labels, verbose=2,
                             validation_split=0.2, epochs=self.n_epochs)
         return history.history
 
