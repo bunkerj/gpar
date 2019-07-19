@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow import keras
 from src_utils import stack_all_columns
 
 
@@ -12,7 +11,7 @@ class ModelAggregator:
         self.histories = []
 
     def _get_train_data(self):
-        fashion_mnist = keras.datasets.fashion_mnist
+        fashion_mnist = tf.keras.datasets.fashion_mnist
         train_images, train_labels = fashion_mnist.load_data()[0]
         return train_images / 255.0, train_labels
 
@@ -36,11 +35,11 @@ class ModelAggregator:
         return history.history
 
     def _construct_model(self, num_layers, width):
-        components = [keras.layers.Flatten(input_shape=(28, 28))]
+        components = [tf.keras.layers.Flatten(input_shape=(28, 28))]
         for i in range(num_layers):
-            components.append(keras.layers.Dense(width, activation=tf.nn.relu))
-        components.append(keras.layers.Dense(10, activation=tf.nn.softmax))
-        return keras.Sequential(components)
+            components.append(tf.keras.layers.Dense(width, activation=tf.nn.relu))
+        components.append(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
+        return tf.keras.Sequential(components)
 
     def get_all_losses(self):
         """Returns NxM matrix for N epochs and M models."""
