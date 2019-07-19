@@ -5,8 +5,8 @@ from kernels import get_exponential_decay_kernel
 from src_utils import sample_from_bounds
 
 N_MODELS = 6
-N_EPOCHS = 10
-N_OBS = 5
+N_EPOCHS = 30
+N_OBS = 20
 NUM_RESTARTS = 35
 KERNEL_FUNCTION = get_exponential_decay_kernel
 PLOT_SHAPE = (2, 3)
@@ -35,5 +35,6 @@ X_test = X_true
 # Run experiment
 exp = ExperimentRunner(X_obs, Y_obs, X_test, Y_true,
                        KERNEL_FUNCTION, NUM_RESTARTS,
-                       plot_shape=PLOT_SHAPE)
+                       plot_shape=PLOT_SHAPE,
+                       legend_loc='upper right')
 exp.run()
