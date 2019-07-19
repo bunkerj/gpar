@@ -57,7 +57,8 @@ def initialize_labels(n, initial_labels):
 
 def plot_all_outputs(model_means, model_vars, igp_means, igp_vars,
                      X_new, Y_true, X_obs, Y_obs,
-                     figure_id_start=0, initial_labels=None, plot_shape=(1, 3)):
+                     figure_id_start=0, initial_labels=None,
+                     plot_shape=(1, 3), legend_loc='upper left'):
     """Plot all GPAR outputs against: observations, igp, truth."""
     labels = initialize_labels(Y_true.shape[1], initial_labels)
     for out_id, label in enumerate(labels):
@@ -67,7 +68,7 @@ def plot_all_outputs(model_means, model_vars, igp_means, igp_vars,
         plot_single_output(X_new, igp_means, igp_vars, out_id, 'IGP', False)
         plot_truth(X_new, Y_true, out_id)
         if (out_id + 1) % get_num_subplots(plot_shape) == 0:
-            plt.legend(loc='upper left')
+            plt.legend(loc=legend_loc)
         plt.title('{}'.format(label))
         plt.grid(True)
 

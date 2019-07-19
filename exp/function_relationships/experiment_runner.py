@@ -7,7 +7,8 @@ from exp.function_relationships.utils import plot_mse_values, plot_all_outputs
 
 class ExperimentRunner:
     def __init__(self, X_obs, Y_obs, X_new, Y_true, kernel_function,
-                 num_restarts=10, num_inducing=None, labels=None, plot_shape=(1, 3)):
+                 num_restarts=10, num_inducing=None, labels=None,
+                 plot_shape=(1, 3), legend_loc='upper_left'):
         self.X_obs = X_obs.astype(float)
         self.Y_obs = Y_obs.astype(float)
         self.X_new = X_new.astype(float)
@@ -18,6 +19,7 @@ class ExperimentRunner:
         self.labels = labels
         self.has_trained_models = False
         self.plot_shape = plot_shape
+        self.legend_loc = legend_loc
 
     def _get_model_predictions(self, model_class):
         """Returns means and variances."""
@@ -56,8 +58,9 @@ class ExperimentRunner:
         plot_mse_values(gpar_means, igp_means, self.Y_true, figure_id_start=0,
                         initial_labels=self.labels, plot_shape=self.plot_shape)
         plot_all_outputs(gpar_means, gpar_vars, igp_means, igp_vars,
-                         self.X_new, self.Y_true, self.X_obs, self.Y_obs, figure_id_start=figure_offset,
-                         initial_labels=self.labels, plot_shape=self.plot_shape)
+                         self.X_new, self.Y_true, self.X_obs, self.Y_obs,
+                         figure_id_start=figure_offset, initial_labels=self.labels,
+                         plot_shape=self.plot_shape, legend_loc=self.legend_loc)
         plt.show()
 
     def run(self):
