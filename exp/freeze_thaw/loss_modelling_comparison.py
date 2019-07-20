@@ -2,7 +2,7 @@ import numpy as np
 from exp.freeze_thaw.model_aggregator import ModelAggregator
 from exp.function_relationships.experiment_runner import ExperimentRunner
 from kernels import get_exponential_decay_kernel
-from src_utils import sample_from_bounds
+from src_utils import sample_from_bounds, stack_all_columns
 
 N_MODELS = 6
 N_EPOCHS = 30
@@ -19,7 +19,7 @@ hyp_list = [sample_from_bounds(bounds_list) for _ in range(N_MODELS)]
 model_aggregator = ModelAggregator(hyp_list)
 model_aggregator.train_all_models(N_EPOCHS)
 losses = model_aggregator.get_all_losses()
-Y_true = losses
+Y_true = stack_all_columns(losses)
 
 # Get epochs for truth
 X_true = np.arange(1, Y_true.shape[0] + 1) \

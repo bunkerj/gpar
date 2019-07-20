@@ -1,7 +1,7 @@
 import numpy as np
 from time import time
 from matplotlib import pyplot as plt
-from src_utils import get_bounded_samples
+from src_utils import get_bounded_samples, stack_all_columns
 from exp.freeze_thaw.model_aggregator import ModelAggregator
 
 
@@ -25,7 +25,7 @@ class RandomSearch:
         self.training_time = time() - start_time
 
         losses = model_aggregator.get_all_losses()
-        self.min_losses = self._get_min_loss(losses)
+        self.min_losses = self._get_min_loss(stack_all_columns(losses))
 
     def plot(self):
         epochs = np.arange(1, self.n_epochs + 1) \

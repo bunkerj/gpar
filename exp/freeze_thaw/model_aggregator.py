@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from src_utils import stack_all_columns
 from exp.freeze_thaw.utils import hyp_to_key
 
 
@@ -59,7 +58,10 @@ class ModelAggregator:
         for key in self.val_losses:
             single_val_losses = self.val_losses[key]
             losses.append(np.array(single_val_losses).reshape((-1, 1)))
-        return stack_all_columns(losses)
+        return losses
 
     def get_specified_models(self, keys):
         return {key: self.models[key] for key in keys}
+
+    def get_all_keys(self):
+        return self.models.keys()
