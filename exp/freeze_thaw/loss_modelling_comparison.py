@@ -16,8 +16,8 @@ bounds_list = [[1, 10], [5, 500]]
 hyp_list = [sample_from_bounds(bounds_list) for _ in range(N_MODELS)]
 
 # Train all models
-model_aggregator = ModelAggregator(hyp_list, N_EPOCHS)
-model_aggregator.train_all_models()
+model_aggregator = ModelAggregator(hyp_list)
+model_aggregator.train_all_models(N_EPOCHS)
 losses = model_aggregator.get_all_losses()
 Y_true = losses
 

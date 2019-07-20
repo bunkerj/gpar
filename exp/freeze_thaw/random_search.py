@@ -18,10 +18,10 @@ class RandomSearch:
 
     def run(self):
         hyp_list = get_bounded_samples(self.hyp_bounds_list, self.n_samples)
-        model_aggregator = ModelAggregator(hyp_list, self.n_epochs)
+        model_aggregator = ModelAggregator(hyp_list)
 
         start_time = time()
-        model_aggregator.train_all_models()
+        model_aggregator.train_all_models(self.n_epochs)
         self.training_time = time() - start_time
 
         losses = model_aggregator.get_all_losses()
