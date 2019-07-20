@@ -48,3 +48,7 @@ def sample_from_bounds(bounds_list):
         low = bounds[0]
         sample.append(np.random.randint(low, high + 1))
     return tuple(sample)
+
+
+def get_bounded_samples(hyp_bounds_list, n_samples):
+    return [sample_from_bounds(hyp_bounds_list) for _ in range(n_samples)]
