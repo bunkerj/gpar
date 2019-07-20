@@ -8,7 +8,7 @@ from exp.function_relationships.utils import plot_mse_values, plot_all_outputs
 class ExperimentRunner:
     def __init__(self, X_obs, Y_obs, X_new, Y_true, kernel_function,
                  num_restarts=0, num_inducing=None, labels=None,
-                 plot_shape=(1, 3), legend_loc='upper_left'):
+                 plot_shape=(1, 3), legend_loc='upper left'):
         self.X_obs = X_obs.astype(float)
         self.Y_obs = Y_obs.astype(float)
         self.X_new = X_new.astype(float)
