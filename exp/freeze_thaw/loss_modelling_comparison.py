@@ -19,7 +19,7 @@ hyp_list = [sample_from_bounds(bounds_list) for _ in range(N_MODELS)]
 model_aggregator = ModelAggregator(hyp_list)
 model_aggregator.train_all_models(N_EPOCHS)
 losses = model_aggregator.get_all_losses()
-Y_true = stack_all_columns(losses)
+Y_true = stack_all_columns(losses.values())
 
 # Get epochs for truth
 X_true = np.arange(1, Y_true.shape[0] + 1) \

@@ -54,10 +54,10 @@ class ModelAggregator:
 
     def get_all_losses(self):
         """Returns NxM matrix for N epochs and M models."""
-        losses = []
+        losses = {}
         for key in self.val_losses:
             single_val_losses = self.val_losses[key]
-            losses.append(np.array(single_val_losses).reshape((-1, 1)))
+            losses[key] = np.array(single_val_losses).reshape((-1, 1))
         return losses
 
     def get_specified_models(self, keys):
