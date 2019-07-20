@@ -64,4 +64,4 @@ class ModelAggregator:
         return {key: self.models[key] for key in keys}
 
     def get_all_keys(self):
-        return self.models.keys()
+        return tuple(self.models.keys())
