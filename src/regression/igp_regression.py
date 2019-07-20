@@ -4,7 +4,7 @@ from src_utils import slice_column, concat_right_column
 
 
 class IGPRegression(Regression):
-    def __init__(self, X_obs, Y_obs, kernel_function, num_restarts=10,
+    def __init__(self, X_obs, Y_obs, kernel_function, num_restarts=0,
                  is_zero_noise=False, num_inducing=None, init_likelihood_var=0.0001):
         super().__init__(X_obs, Y_obs, kernel_function,
                          num_restarts=num_restarts,
@@ -25,7 +25,7 @@ class IGPRegression(Regression):
             if self.is_zero_noise:
                 m.likelihood.variance = 0.00001
                 m.likelihood.variance.trainable = False
-            gpflow.train.ScipyOptimizer().minimize(m)
+            self._optimize_model(m)
             models.append(m)
         return tuple(models)
 

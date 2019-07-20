@@ -4,7 +4,7 @@ from src_utils import should_update_max, slice_column, concat_right_column
 
 
 class GPARRegression(Regression):
-    def __init__(self, X, Y, kernel_function, manual_ordering=None, num_restarts=10,
+    def __init__(self, X, Y, kernel_function, manual_ordering=None, num_restarts=0,
                  is_zero_noise=False, num_inducing=None, init_likelihood_var=0.0001):
         super().__init__(X, Y, kernel_function,
                          num_restarts=num_restarts,
@@ -106,7 +106,7 @@ class GPARRegression(Regression):
         if self.is_zero_noise:
             m.likelihood.variance = 0.00001
             m.likelihood.variance.trainable = False
-        gpflow.train.ScipyOptimizer().minimize(m)
+        self._optimize_model(m)
         return m
 
     def _stack_in_order(self, data_dict):

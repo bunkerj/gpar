@@ -7,7 +7,7 @@ from regression.igp_regression import IGPRegression
 from exp.noise_structure.utils import plot_noise, \
     get_split_outputs, get_prediction_noise
 
-NUM_RESTARTS = 10
+NUM_RESTARTS = 0
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 
 START = 0

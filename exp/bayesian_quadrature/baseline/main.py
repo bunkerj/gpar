@@ -9,7 +9,7 @@ from exp.bayesian_quadrature.baseline.utils import *
 
 np.random.seed(17)
 
-NUM_RESTARTS = 30
+NUM_RESTARTS = 0
 KERNEL_FUNCTION = full_RBF
 START = -5
 END = 0.5

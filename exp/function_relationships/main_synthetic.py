@@ -6,7 +6,7 @@ from synthetic_functions import synthetic_functions, noisy_synthetic_functions
 
 np.random.seed(17)
 
-NUM_RESTARTS = 35
+NUM_RESTARTS = 10
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
 
 # Construct synthetic observations

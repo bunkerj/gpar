@@ -6,7 +6,7 @@ from exp.function_relationships.experiment_runner import ExperimentRunner
 
 np.random.seed(17)
 
-NUM_RESTARTS = 35
+NUM_RESTARTS = 0
 NUM_INDUCING = 100
 PERCENT_VISIBLE = 30
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel
