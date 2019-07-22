@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from exp.freeze_thaw.utils import hyp_to_key
+import pickle
 
 
 class ModelAggregator:
@@ -17,6 +18,17 @@ class ModelAggregator:
             losses[key] = np.array(single_val_losses).reshape((-1, 1))
         return losses
 
+    def get_stacked_losses(self):
+        losses_list = [tf.constant(losses, shape=(len(losses), 1))
+                       for losses in self.val_losses.values()]
+        return tf.concat(losses_list, axis=0)
+
+    def get_loss_count_per_curve(self):
+        return [len(losses) for losses in self.val_losses.values()]
+
+    def get_curve_count(self):
+        return len(self.models)
+
     def get_specified_models(self, keys):
         return {key: self.models[key] for key in keys}
 
@@ -29,10 +41,16 @@ class ModelAggregator:
         self._update_val_losses(key, history)
 
     def train_all_models(self, n_epochs):
-        for key in self.models:
-            model = self.models[key]
-            history = self._train_model(model, n_epochs)
-            self._update_val_losses(key, history)
+        # for key in self.models:
+        #     model = self.models[key]
+        #     history = self._train_model(model, n_epochs)
+        #     self._update_val_losses(key, history)
+
+        # TODO: delete this when finished with testing
+        # with open('losses.dictionary', 'wb') as losses_dictionary_file:
+        #     pickle.dump(self.val_losses, losses_dictionary_file)
+        with open('losses.dictionary', 'rb') as losses_dictionary_file:
+            self.val_losses = pickle.load(losses_dictionary_file)
 
     def _get_train_data(self):
         fashion_mnist = tf.keras.datasets.fashion_mnist
