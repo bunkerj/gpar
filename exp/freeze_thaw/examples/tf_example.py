@@ -1,17 +1,8 @@
 import numpy as np
 import tensorflow as tf
+from optimizer import Optimizer
 
 tf.enable_eager_execution()
-
-
-def minimize_loss(loss_func, params, args, learning_rate=0.1, n_epochs=10):
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
-    for _ in range(n_epochs):
-        with tf.GradientTape() as tape:
-            loss = loss_func(*args)
-        grads = tape.gradient(loss, params)
-        optimizer.apply_gradients(zip(grads, params))
-    return loss
 
 
 def rbf_kernel_generator(vs, ls):
@@ -54,5 +45,6 @@ y = x
 args = (x, y, kern)
 
 print_info(vs, ls, loss_func)
-minimize_loss(loss_func, params, args, learning_rate=0.1, n_epochs=10)
+optimizer = Optimizer(learning_rate=0.1, n_epochs=10)
+optimizer.minimize_loss(loss_func, params, args)
 print_info(vs, ls, loss_func)
