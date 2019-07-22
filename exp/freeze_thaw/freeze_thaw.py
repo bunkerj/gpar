@@ -13,6 +13,23 @@ class FreezeThaw:
         self.max_epoch = max_epoch
         self.init_epochs = init_epochs
         self.model_aggregator = None
+        self.param_aggregator = None
+
+    def run(self):
+        self._train_initial_models()
+        self._update_hyperparameters()
+        for _ in range(self.max_epoch):
+            key_basket = self._construct_key_basket()
+            self._train_model_from_basket(key_basket)
+            self._update_hyperparameters()
+
+    def plot(self):
+        """Plot all losses."""
+        losses = self.model_aggregator.get_all_losses()
+        for key in losses:
+            loss = losses[key]
+            x = self._get_suitable_indices(loss)
+            plt.plot(x, loss, label=key)
 
     def _train_initial_models(self):
         hyp_list = get_bounded_samples(self.hyp_bounds_list, self.b_old)
@@ -26,7 +43,7 @@ class FreezeThaw:
         """
         return self.model_aggregator.get_all_keys()
 
-    def select_model_to_train(self, key_basket):
+    def _select_model_to_train(self, key_basket):
         """
         Use ES to compute the model to train.
         Return: key of model to train.
@@ -35,27 +52,12 @@ class FreezeThaw:
         return key_basket[rand_index]
 
     def _train_model_from_basket(self, basket):
-        model_key = self.select_model_to_train(basket)
+        model_key = self._select_model_to_train(basket)
         print('Training model {}'.format(model_key))
         self.model_aggregator.train_model_given_key(model_key, 1)
 
     def _update_hyperparameters(self):
         print('Updating the hyperparameters...')
 
-    def run(self):
-        self._train_initial_models()
-        for _ in range(self.max_epoch):
-            key_basket = self._construct_key_basket()
-            self._train_model_from_basket(key_basket)
-            self._update_hyperparameters()
-
     def _get_suitable_indices(self, arr):
         return np.arange(1, arr.shape[0] + 1).reshape((-1, 1))
-
-    def plot(self):
-        """Plot all losses."""
-        losses = self.model_aggregator.get_all_losses()
-        for key in losses:
-            loss = losses[key]
-            x = self._get_suitable_indices(loss)
-            plt.plot(x, loss, label=key)

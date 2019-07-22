@@ -13,9 +13,6 @@ class RandomSearch:
         self.min_losses = np.array([]).reshape((-1, 1))
         self.training_time = 0
 
-    def _get_min_loss(self, losses):
-        return np.min(losses, axis=1).reshape((-1, 1))
-
     def run(self):
         hyp_list = get_bounded_samples(self.hyp_bounds_list, self.n_samples)
         model_aggregator = ModelAggregator(hyp_list)
@@ -31,3 +28,6 @@ class RandomSearch:
         epochs = np.arange(1, self.n_epochs + 1) \
             .reshape((-1, 1)).astype(float)
         plt.plot(epochs, self.min_losses, label='Random Search')
+
+    def _get_min_loss(self, losses):
+        return np.min(losses, axis=1).reshape((-1, 1))
