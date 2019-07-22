@@ -2,7 +2,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from src_utils import get_bounded_samples
 from optimizer import Optimizer
-from exp.freeze_thaw.utils import get_O
 from exp.freeze_thaw.aggregators.model_aggregator import ModelAggregator
 from exp.freeze_thaw.aggregators.param_aggregator import ParamAggregator
 
@@ -68,8 +67,9 @@ class FreezeThaw:
         K_x: standard cov matrix (using RBF)
         O: blockdiag(1_1, 1_2, ... , 1_n)
         """
-        K_t = self.pa.get_K_t()
         K_x = self.pa.get_K_x()
+        K_t = self.pa.get_K_t()
+
         return 3 + 2  # TODO: Construct loss expression.
 
     def _print_loss(self, args):
@@ -78,10 +78,11 @@ class FreezeThaw:
     def _update_hyperparameters(self):
         print('Updating the hyperparameters...')
         if self.pa is None:
-            self.pa = ParamAggregator(self.ma.get_curve_count())
+            loss_count_dict = self.ma.get_loss_count_dict()
+            self.pa = ParamAggregator(loss_count_dict)
 
         y = self.ma.get_stacked_losses()
-        O = get_O(self.ma.get_loss_count_per_curve())
+        O = self.pa.get_O()
         m = self.pa.get_global_means()
         global_kernel_param_list = self.pa.get_global_kernel_param_list()
         local_kernel_param_list = self.pa.get_local_kernel_param_list()

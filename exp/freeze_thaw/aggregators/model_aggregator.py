@@ -23,8 +23,8 @@ class ModelAggregator:
                        for losses in self.val_losses.values()]
         return tf.concat(losses_list, axis=0)
 
-    def get_loss_count_per_curve(self):
-        return [len(losses) for losses in self.val_losses.values()]
+    def get_loss_count_dict(self):
+        return {key: len(self.val_losses[key]) for key in self.val_losses}
 
     def get_curve_count(self):
         return len(self.models)
