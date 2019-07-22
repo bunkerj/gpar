@@ -1,5 +1,5 @@
 import numpy as np
-from exp.freeze_thaw.model_aggregator import ModelAggregator
+from exp.freeze_thaw.aggregators.model_aggregator import ModelAggregator
 from exp.function_relationships.experiment_runner import ExperimentRunner
 from kernels import get_exponential_decay_kernel
 from src_utils import sample_from_bounds, stack_all_columns

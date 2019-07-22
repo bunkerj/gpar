@@ -2,7 +2,7 @@ import numpy as np
 from time import time
 from matplotlib import pyplot as plt
 from src_utils import get_bounded_samples, stack_all_columns
-from exp.freeze_thaw.model_aggregator import ModelAggregator
+from exp.freeze_thaw.aggregators.model_aggregator import ModelAggregator
 
 
 class RandomSearch:
