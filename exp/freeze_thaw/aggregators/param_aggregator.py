@@ -34,7 +34,7 @@ class ParamAggregator:
             kernel = self._exp_kernel_generator(alpha, beta)
             index_mat = tf.reshape(tf.range(1, count + 1, dtype=float), (-1, 1))
             K_t_mat = self._compute_gram_matrix(kernel, index_mat) \
-                      + tf.eye(count) * (diag_noise + 1e-4)
+                      + tf.eye(count) * (diag_noise + 1e-3)
             K_t_mats.append(K_t_mat)
         arr = get_block_diag_matrix(K_t_mats)
         return arr
@@ -45,13 +45,32 @@ class ParamAggregator:
         K_x = self._compute_gram_matrix(kernel, index_matrix)
         return K_x
 
-    def get_global_posterior(self):
-        pass
+    def get_global_posterior(self, y):
+        """Return Gaussian mean and variance."""
+        K_x = self.get_K_x()
+        K_t = self.get_K_t()
+        K_t_inv = np.linalg.inv(K_t)
+
+        m = self.get_global_means()
+        O = self.get_O()
+
+        T1 = np.matmul(tf.transpose(O), K_t_inv)
+        t = y - np.matmul(O, m)
+        L = np.matmul(T1, t)
+        L_inv = np.linalg.inv(L)
+        G = np.matmul(T1, O)
+
+        C = K_x - np.matmul(np.matmul(K_x, np.linalg.inv(K_x + L_inv)), K_x)
+        mu = m + np.matmul(C, G)
+
+        return mu, C
 
     def get_global_posterior_predictive(self):
+        """Return Gaussian mean and variance."""
         pass
 
     def get_local_posterior_predictive(self):
+        """Return Gaussian mean and variance."""
         # Use two schemes depending on if there are existing observations
         pass
 

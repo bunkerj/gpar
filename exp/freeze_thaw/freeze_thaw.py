@@ -94,8 +94,8 @@ class FreezeThaw:
         T1 = tf.matmul(tf.transpose(O), K_t_inv)
         t = y - tf.matmul(O, m)
         G = tf.matmul(T1, t)
-        D = tf.matmul(T1, O)
-        T2 = K_x_inv + D
+        L = tf.matmul(T1, O)
+        T2 = K_x_inv + L
 
         t1 = -0.5 * tf.matmul(tf.matmul(tf.transpose(t), K_t_inv), t)
         t2 = 0.5 * tf.matmul(tf.matmul(tf.transpose(G), tf.linalg.inv(T2)), G)
