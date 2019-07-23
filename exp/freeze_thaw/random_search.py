@@ -24,7 +24,7 @@ class RandomSearch:
         losses = model_aggregator.get_all_losses()
         self.min_losses = self._get_min_loss(stack_all_columns(losses.values()))
 
-    def plot(self):
+    def plot_min_losses(self):
         epochs = np.arange(1, self.n_epochs + 1) \
             .reshape((-1, 1)).astype(float)
         plt.plot(epochs, self.min_losses, label='Random Search')

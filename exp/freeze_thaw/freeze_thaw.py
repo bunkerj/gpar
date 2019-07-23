@@ -27,8 +27,10 @@ class FreezeThaw:
             self._train_model_from_basket(key_basket)
             self._update_hyperparameters()
 
-    def plot(self):
-        """Plot all losses."""
+    def plot_min_losses(self):
+        pass
+
+    def plot_all_losses(self):
         losses = self.ma.get_all_losses()
         for key in losses:
             loss = losses[key]

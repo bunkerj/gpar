@@ -33,9 +33,10 @@ class ParamAggregator:
             alpha, beta, diag_noise = self.local_kernel_param_list[i]
             kernel = self._exp_kernel_generator(alpha, beta)
             index_mat = tf.reshape(tf.range(1, count + 1, dtype=float), (-1, 1))
-            K_t_mat = self._compute_gram_matrix(kernel, index_mat) + tf.eye(count) * diag_noise
+            K_t_mat = self._compute_gram_matrix(kernel, index_mat) \
+                      + tf.eye(count) * (diag_noise + 1e-4)
             K_t_mats.append(K_t_mat)
-        arr = get_block_diag_matrix(K_t_mats)  # TODO: Fix this by adding noise to diagonal
+        arr = get_block_diag_matrix(K_t_mats)
         return arr
 
     def get_K_x(self):
@@ -43,6 +44,16 @@ class ParamAggregator:
         kernel = self._rbf_kernel_generator(*self.global_kernel_param_list)
         K_x = self._compute_gram_matrix(kernel, index_matrix)
         return K_x
+
+    def get_global_posterior(self):
+        pass
+
+    def get_global_posterior_predictive(self):
+        pass
+
+    def get_local_posterior_predictive(self):
+        # Use two schemes depending on if there are existing observations
+        pass
 
     def _get_index_matrix(self):
         """
