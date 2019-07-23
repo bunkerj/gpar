@@ -1,7 +1,8 @@
 import numpy as np
+import tensorflow as tf
+from optimizer import Optimizer
 from matplotlib import pyplot as plt
 from src_utils import get_bounded_samples
-from optimizer import Optimizer
 from exp.freeze_thaw.aggregators.model_aggregator import ModelAggregator
 from exp.freeze_thaw.aggregators.param_aggregator import ParamAggregator
 
@@ -59,7 +60,7 @@ class FreezeThaw:
         print('Training model {}'.format(model_key))
         self.ma.train_model_given_key(model_key, 1)
 
-    def _get_log_likelihood(self, y, O, m):
+    def _get_loss(self, y, O, m):
         """
         y: (y_1, y_2, ... , y_n)^T
         m: (m_1, m_2, ... , m_n)^T
@@ -69,11 +70,25 @@ class FreezeThaw:
         """
         K_x = self.pa.get_K_x()
         K_t = self.pa.get_K_t()
+        K_x_inv = tf.linalg.inv(K_x)
+        K_t_inv = tf.linalg.inv(K_t)
 
-        return 3 + 2  # TODO: Construct loss expression.
+        T1 = tf.matmul(tf.transpose(O), K_t_inv)
+        t = y - tf.matmul(O, m)
+        G = tf.matmul(T1, t)
+        D = tf.matmul(T1, O)
+        T2 = K_x_inv + D
+
+        t1 = -0.5 * tf.matmul(tf.matmul(tf.transpose(t), K_t_inv), t)
+        t2 = 0.5 * tf.matmul(tf.matmul(tf.transpose(G), tf.linalg.inv(T2)), G)
+        t3 = -0.5 * tf.log(tf.linalg.det(T2))
+        t4 = tf.log(tf.linalg.det(K_x))
+        t5 = tf.log(tf.linalg.det(K_t))
+
+        return -(t1 + t2 + t3 + t4 + t5)
 
     def _print_loss(self, args):
-        print('Loss: {}'.format(self._get_log_likelihood(*args)))
+        print('Loss: {}'.format(self._get_loss(*args)))
 
     def _update_hyperparameters(self):
         print('Updating the hyperparameters...')
@@ -90,9 +105,9 @@ class FreezeThaw:
         params = [m] + global_kernel_param_list + local_kernel_param_list
         args = (y, O, m)
 
-        print('Loss Before: {}'.format(self._get_log_likelihood(*args)))
-        self.optimizer.minimize_loss(self._get_log_likelihood, params, args)
-        print('Loss Before: {}'.format(self._get_log_likelihood(*args)))
+        print('Loss Before: {}'.format(self._get_loss(*args)))
+        self.optimizer.minimize_loss(self._get_loss, params, args)
+        print('Loss Before: {}'.format(self._get_loss(*args)))
 
         a = 10  # TODO: Check if changes were performed.
 

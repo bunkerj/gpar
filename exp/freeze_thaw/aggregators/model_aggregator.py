@@ -21,7 +21,7 @@ class ModelAggregator:
     def get_stacked_losses(self):
         losses_list = [tf.constant(losses, shape=(len(losses), 1))
                        for losses in self.val_losses.values()]
-        return tf.concat(losses_list, axis=0)
+        return tf.cast(tf.concat(losses_list, axis=0), float)
 
     def get_loss_count_dict(self):
         return {key: len(self.val_losses[key]) for key in self.val_losses}
