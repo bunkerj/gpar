@@ -46,7 +46,7 @@ class ParamAggregator:
         return K_x
 
     def get_global_posterior(self, y):
-        """Return Gaussian mean and variance."""
+        """Return Gaussian means and variances."""
         K_x = self.get_K_x()
         K_t = self.get_K_t()
         K_t_inv = np.linalg.inv(K_t)
@@ -55,22 +55,41 @@ class ParamAggregator:
         O = self.get_O()
 
         T1 = np.matmul(tf.transpose(O), K_t_inv)
-        t = y - np.matmul(O, m)
-        L = np.matmul(T1, t)
+        t = y - np.matmul(O, m.numpy())
+        L = np.matmul(T1, O)
         L_inv = np.linalg.inv(L)
-        G = np.matmul(T1, O)
+        G = np.matmul(T1, t)
 
-        C = K_x - np.matmul(np.matmul(K_x, np.linalg.inv(K_x + L_inv)), K_x)
-        mu = m + np.matmul(C, G)
+        C_gp = K_x - np.linalg.multi_dot([K_x, np.linalg.inv(K_x + L_inv), K_x])
+        mu_gp = m + np.matmul(C_gp, G)
 
-        return mu, C
+        return mu_gp, C_gp
 
-    def get_global_posterior_predictive(self):
-        """Return Gaussian mean and variance."""
-        pass
+    def get_global_posterior_predictive(self, X_s, y):
+        """Return Gaussian means and variances."""
+        kernel = self._rbf_kernel_generator(*self.global_kernel_param_list)
+
+        mu, C = self.get_global_posterior(y)
+        m = self.get_global_means()
+        O = self.get_O()
+        K_t = self.get_K_t()
+        K_t_inv = np.linalg.inv(K_t)
+
+        K_x = self.get_K_x()
+        K_x_inv = self.get_K_x()
+        K_xs = self._compute_gram_matrix(kernel, X_s)
+        K_xs_trans = np.transpose(K_xs)
+        K_xss = self._compute_gram_matrix(kernel, X_s, X_s)
+        L = np.linalg.multi_dot([tf.transpose(O), K_t_inv, O])
+        L_inv = np.linalg.inv(L)
+
+        mu_gpp = m + np.linalg.multi_dot([K_xs_trans, K_x_inv, mu - m])
+        C_gpp = K_xss - np.linalg.multi_dot([K_xs_trans, np.linalg.inv(K_x + L_inv), K_xs])
+
+        return mu_gpp, C_gpp
 
     def get_local_posterior_predictive(self):
-        """Return Gaussian mean and variance."""
+        """Return Gaussian means and variances."""
         # Use two schemes depending on if there are existing observations
         pass
 
