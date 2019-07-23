@@ -22,12 +22,12 @@ class RandomSearch:
         self.training_time = time() - start_time
 
         losses = model_aggregator.get_all_losses()
-        self.min_losses = self._get_min_loss(stack_all_columns(losses.values()))
+        self.min_losses = self._get_min_losses(stack_all_columns(losses.values()))
 
     def plot_min_losses(self):
         epochs = np.arange(1, self.n_epochs + 1) \
             .reshape((-1, 1)).astype(float)
         plt.plot(epochs, self.min_losses, label='Random Search')
 
-    def _get_min_loss(self, losses):
+    def _get_min_losses(self, losses):
         return np.min(losses, axis=1).reshape((-1, 1))

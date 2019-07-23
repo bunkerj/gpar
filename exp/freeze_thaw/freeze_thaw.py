@@ -28,7 +28,10 @@ class FreezeThaw:
             self._update_hyperparameters()
 
     def plot_min_losses(self):
-        pass
+        min_losses = self._get_min_losses()
+        epochs = np.arange(1, len(min_losses) + 1) \
+            .reshape((-1, 1)).astype(float)
+        plt.plot(epochs, min_losses, label='Freeze-Thaw')
 
     def plot_all_losses(self):
         losses = self.ma.get_all_losses()
@@ -36,6 +39,19 @@ class FreezeThaw:
             loss = losses[key]
             x = self._get_suitable_indices(loss)
             plt.plot(x, loss, label=key)
+
+    def _get_min_losses(self):
+        all_losses = self.ma.get_all_losses()
+        max_length = max(len(losses) for losses in all_losses.values())
+        min_losses = np.zeros((max_length, 1))
+        for i in range(max_length):
+            curr_min_losses = 9999
+            for key in all_losses:
+                losses = all_losses[key]
+                if len(losses) > i and losses[i] < curr_min_losses:
+                    curr_min_losses = losses[i]
+            min_losses[i] = curr_min_losses
+        return min_losses
 
     def _train_initial_models(self):
         hyp_list = get_bounded_samples(self.hyp_bounds_list, self.b_old)
