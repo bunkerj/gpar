@@ -69,17 +69,17 @@ class ParamAggregator:
         return flattened_list
 
     def _initialize_global_means(self, curve_count):
-        return tf.ones((curve_count, 1))
+        return tf.Variable(tf.ones((curve_count, 1)))
 
     def _initialize_global_param_list(self):
         """For global RBF: vs, ls."""
-        return [tf.convert_to_tensor(np.random.lognormal()),
-                tf.convert_to_tensor(np.random.lognormal())]
+        return [tf.Variable(np.random.lognormal()),
+                tf.Variable(np.random.lognormal())]
 
     def _sample_local_param(self):
-        return [tf.convert_to_tensor(np.random.lognormal()),
-                tf.convert_to_tensor(np.random.lognormal()),
-                tf.convert_to_tensor(np.random.lognormal())]
+        return [tf.Variable(np.random.lognormal()),
+                tf.Variable(np.random.lognormal()),
+                tf.Variable(np.random.lognormal())]
 
     def _initialize_local_param_list(self, curve_count):
         """For each curve: alpha, beta, diagonal_noise."""

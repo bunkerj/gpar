@@ -107,9 +107,7 @@ class FreezeThaw:
 
         print('Loss Before: {}'.format(self._get_loss(*args)))
         self.optimizer.minimize_loss(self._get_loss, params, args)
-        print('Loss Before: {}'.format(self._get_loss(*args)))
-
-        a = 10  # TODO: Check if changes were performed.
+        print('Loss After: {}'.format(self._get_loss(*args)))
 
     def _get_suitable_indices(self, arr):
         return np.arange(1, arr.shape[0] + 1).reshape((-1, 1))
