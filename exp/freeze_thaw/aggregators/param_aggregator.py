@@ -88,10 +88,14 @@ class ParamAggregator:
 
         return mu_gpp, C_gpp
 
-    def get_local_posterior_predictive(self):
+    def get_local_posterior_predictive(self, key, pred_count, y_n, epoch):
         """Return Gaussian means and variances."""
         # Use two schemes depending on if there are existing observations
-        pass
+        loss_count = self.loss_count_dict[key]
+
+        ones = np.ones((pred_count, 1))
+        x_n = np.arange(1, loss_count + 1).reshape((-1, 1))
+        Omega = ones - np.linalg.multi_dot([])
 
     def _get_index_matrix(self):
         """
@@ -107,8 +111,8 @@ class ParamAggregator:
         Returns a list where each element is a 1xN vector
         corresponding to a hyperparam config.
         """
-        return [np.array(key_to_hyp(idx)).reshape((1, -1))
-                for idx in self.loss_count_dict.keys()]
+        return [np.array(key_to_hyp(key)).reshape((1, -1))
+                for key in self.loss_count_dict.keys()]
 
     def _flatten_list(self, arr):
         # TODO: make this a recursive utils function
