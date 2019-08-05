@@ -36,8 +36,11 @@ def get_total_mse_values_and_ordering_index(X_obs, Y_obs, X_new, Y_true,
     return total_mse_values, correct_order_index
 
 
-def plot_log_likelihood_vs_restarts(total_mse_values, correct_order_index, num_restarts_values):
+def plot_log_likelihood_vs_restarts(total_mse_values, correct_order_index,
+                                    num_restarts_values, title=None):
     plt.plot(num_restarts_values, total_mse_values)
+    if title is not None:
+        plt.title('')
     if correct_order_index is not None:
         plt.axvline(correct_order_index, color='r')
     plt.ylabel('Total MSE for all outputs')
