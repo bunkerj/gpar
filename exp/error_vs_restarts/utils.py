@@ -1,6 +1,9 @@
+import os
+import pickle
 import numpy as np
 from src_utils import slice_column
 from evaluation import smse
+from constants import NUM_RESTARTS_VALUES_PATH, OUTPUTS_PATH
 from regression.gpar_regression import GPARRegression
 from matplotlib import pyplot as plt
 
@@ -37,8 +40,18 @@ def get_total_smse_values_and_ordering_index(X_obs, Y_obs, X_new, Y_true,
     return total_mse_values
 
 
-def plot_error_vs_restarts(total_mse_values, num_restarts_values):
-    plt.plot(num_restarts_values, total_mse_values)
+def plot_error_vs_restarts():
+    with open(NUM_RESTARTS_VALUES_PATH, 'rb') as file:
+        num_restarts_values = pickle.load(file)
+
+    for filename in os.listdir(OUTPUTS_PATH):
+        name = filename.split('.')[0]
+        path = os.path.join(OUTPUTS_PATH, filename)
+        with open(path, 'rb') as file:
+            total_mse_values = pickle.load(file)
+            plt.plot(num_restarts_values, total_mse_values, label=name)
     plt.title('Error vs Number of Restarts')
     plt.ylabel('Total SMSE for all outputs')
     plt.xlabel('Number of Restarts')
+    plt.grid()
+    plt.legend()

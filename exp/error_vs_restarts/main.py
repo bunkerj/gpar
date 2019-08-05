@@ -1,42 +1,47 @@
+import os
 import pickle
 import numpy as np
-from matplotlib import pyplot as plt
 from kernels import get_full_rbf_kernel
-from utils import plot_error_vs_restarts, get_total_smse_values_and_ordering_index
+from utils import get_total_smse_values_and_ordering_index
 from src_utils import map_and_stack_outputs
-from synthetic_functions import low_complexity_functions, noisy_low_complexity_functions
+from constants import NUM_RESTARTS_VALUES_PATH
+from synthetic_functions import \
+    low_complexity_functions, noisy_low_complexity_functions, \
+    medium_complexity_functions, noisy_medium_complexity_functions, \
+    high_complexity_functions, noisy_high_complexity_functions
 
 KERNEL_FUNCTION = get_full_rbf_kernel
+NUM_AVG_SAMPLES = 1
 
-TRUE_FUNCTIONS = low_complexity_functions
-NOISY_FUNCTIONS = noisy_low_complexity_functions
-NUM_AVG_SAMPLES = 5
-FILENAME = '../../data/low_complexity.pickle'
-IS_LOADING = False
+AGGREGATE_FUNCTIONS_DICT = {
+    'low': (low_complexity_functions, noisy_low_complexity_functions),
+    'medium': (medium_complexity_functions, noisy_medium_complexity_functions),
+    'high': (high_complexity_functions, noisy_high_complexity_functions)
+}
 
-# Construct synthetic observations
-n = 50
-X_obs = np.linspace(0, 5, n).reshape((n, 1))
-Y_obs = map_and_stack_outputs(NOISY_FUNCTIONS, X_obs)
+for key in AGGREGATE_FUNCTIONS_DICT.keys():
+    true_functions, noisy_functions = AGGREGATE_FUNCTIONS_DICT[key]
+    filename = 'results/outputs/{}_complexity.pickle'.format(key)
 
-# Construct true outputs
-n_new = 1000
-X_new = np.linspace(0, 5, n_new).reshape((n_new, 1))
-Y_true = map_and_stack_outputs(TRUE_FUNCTIONS, X_new)
+    # Construct synthetic observations
+    n = 50
+    X_obs = np.linspace(0, 5, n).reshape((n, 1))
+    Y_obs = map_and_stack_outputs(noisy_functions, X_obs)
 
-# num_restarts_list = [1, 5, 10, 20, 40, 60, 80, 100, 150, 200]
-num_restarts_list = [1, 5]
-num_restarts_values = np.array(num_restarts_list) \
-    .reshape((len(num_restarts_list), 1))
+    # Construct true outputs
+    n_new = 1000
+    X_new = np.linspace(0, 5, n_new).reshape((n_new, 1))
+    Y_true = map_and_stack_outputs(true_functions, X_new)
 
-if IS_LOADING:
-    with open(FILENAME, 'rb') as file:
-        total_mse_values = pickle.load(file)
-else:
+    num_restarts_values = np.array([1, 5, 10, 20, 40, 50]).reshape((-1, 1))
+
     total_mse_values = get_total_smse_values_and_ordering_index(
-        X_obs, Y_obs, X_new, Y_true, KERNEL_FUNCTION, num_restarts_values, NUM_AVG_SAMPLES)
-    with open(FILENAME, 'wb') as file:
-        pickle.dump(total_mse_values, file)
+        X_obs, Y_obs, X_new, Y_true, KERNEL_FUNCTION,
+        num_restarts_values, NUM_AVG_SAMPLES)
 
-plot_error_vs_restarts(total_mse_values, num_restarts_values)
-plt.show()
+    if not os.path.exists(NUM_RESTARTS_VALUES_PATH):
+        with open(NUM_RESTARTS_VALUES_PATH, 'wb') as file:
+            pickle.dump(num_restarts_values, file)
+
+    with open(filename, 'wb') as file:
+        pickle.dump(total_mse_values, file)
