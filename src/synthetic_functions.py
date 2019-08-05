@@ -3,9 +3,14 @@ from scipy import stats, special
 from numpy import sin, cos, pi, exp, sqrt
 from src_utils import concat_right_column
 
-# ------------------------------ Function Relationships  ------------------------------ #
-
 NOISE_STD = 0.05
+
+
+def get_noisy_functions(functions):
+    return (add_noise(func) for func in functions)
+
+
+# ------------------------------ Function Relationships  ------------------------------ #
 
 
 def eps():
@@ -34,6 +39,66 @@ noisy_synthetic_functions = (
     add_noise(synthetic_functions[0]),
     add_noise(synthetic_functions[1]),
     add_noise(synthetic_functions[2]))
+
+
+# ------------------------------ Low Complexity ------------------------------ #
+def y1_low(x):
+    return 5 * x + 5
+
+
+def y2_low(x):
+    return 7 * y1_low(x) + 12
+
+
+low_complexity_functions = (y1_low, y2_low)
+
+noisy_low_complexity_functions = get_noisy_functions(low_complexity_functions)
+
+
+# ------------------------------ Medium Complexity ------------------------------ #
+
+def y1_medium(x):
+    return 5 * (x ** 2) + 100 * np.sin(x) + 5
+
+
+def y2_medium(x):
+    return 0.005 * y1_medium(x) + x / y1_medium(x) + 200
+
+
+def y3_medium(x):
+    return x ** 2 + y1_medium(x) + 100 * np.cos(y2_medium(x))
+
+
+medium_complexity_functions = (y1_medium, y2_medium, y3_medium)
+
+noisy_medium_complexity_functions = get_noisy_functions(medium_complexity_functions)
+
+
+# ------------------------------ High Complexity ------------------------------ #
+
+def y1_high(x):
+    return 5 * (np.cos(x) ** 2) + x * np.sin(np.cos(x)) ** 2 + 5
+
+
+def y2_high(x):
+    return 5 * np.sin(0.0001 * y1_high(x) ** 3) + x * y1_high(x) * np.cos(np.sin(x)) ** 2 + 100
+
+
+def y3_high(x):
+    return 0.0001 * (y2_high(np.cos(x) * y1_high(x)) ** 2) + x * np.sin(np.sin(x)) ** 3 - 200
+
+
+def y4_high(x):
+    return (y1_high(x) ** 2) / y2_high(x) + y2_high(x) / y3_high(x) + (y3_high(x) ** 2) / y1_high(x)
+
+
+def y5_high(x):
+    return np.sqrt(y1_high(x) * y4_high(x)) + y2_high(x) + y3_high(x) + 10 * np.cos(x)
+
+
+high_complexity_functions = (y1_high, y2_high, y3_high, y4_high, y5_high)
+
+noisy_high_complexity_functions = get_noisy_functions(high_complexity_functions)
 
 
 # ------------------------------ Noise Structure ------------------------------ #
