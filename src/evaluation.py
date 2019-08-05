@@ -6,16 +6,13 @@ def validate_lengths(arr1, arr2):
         raise Exception('Must be the same lengths')
 
 
-def smse(series1, series2):
-    validate_lengths(series1, series2)
-    n = len(series1)
-    error_acc = 0
-    for idx in range(n):
-        e = series1[idx] - series2[idx]
-        error_acc += np.sign(e) * (e ** 2)
+def mse(truth, prediction):
+    validate_lengths(truth, prediction)
+    n = len(truth)
+    error_acc = sum((truth[idx] - prediction[idx]) ** 2 for idx in range(n))
     return float(error_acc / n)
 
 
-def mse(x, y):
-    validate_lengths(x, y)
-    return np.mean((x - y) ** 2)
+def smse(truth, prediction):
+    mse_value = mse(truth, prediction)
+    return float(mse_value / np.var(truth))
