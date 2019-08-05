@@ -42,3 +42,7 @@ def get_non_linear_input_dependent_kernel(original_X, current_X):
     k2 = GPy.kern.RatQuad(input_dim=X_dim + Y_dim,
                           active_dims=list(range(0, X_dim + Y_dim)))
     return k1 + k2
+
+
+def get_full_rbf_kernel(original_X, current_X):
+    return GPy.kern.RBF(input_dim=current_X.shape[1])
