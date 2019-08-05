@@ -117,7 +117,7 @@ class GPARRegression(Regression):
         return result
 
     def predict(self, X_new):
-        """Preform prediction using the conditional ordering."""
+        """Preform prediction using the conditional ordering and return in correct order."""
         current_X = X_new
         mean_dict = {}
         var_dict = {}
