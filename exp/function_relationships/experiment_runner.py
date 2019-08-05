@@ -17,26 +17,26 @@ class ExperimentRunner:
         self.labels = labels
         self.has_trained_models = False
 
-    def _get_model_predictions(self, model_class):
-        """Returns means and variances."""
-        model = model_class(self.X_obs, self.Y_obs, self.kernel_function,
-                            num_restarts=self.num_restarts,
-                            num_inducing=self.num_inducing)
-        return model.predict(self.X_new)
+    def _get_model(self, model_class):
+        return model_class(self.X_obs, self.Y_obs, self.kernel_function,
+                           num_restarts=self.num_restarts,
+                           num_inducing=self.num_inducing)
 
-    def _get_gpar_predictions(self):
-        return self._get_model_predictions(GPARRegression)
+    def _get_gpar_predictions_and_ordering(self):
+        model = self._get_model(GPARRegression)
+        return model.predict(self.X_new), model.get_ordering()
 
     def _get_igp_predictions(self):
-        return self._get_model_predictions(IGPRegression)
+        model = self._get_model(IGPRegression)
+        return model.predict(self.X_new)
 
-    def _get_all_model_predictions(self):
-        gpar_predictions = self._get_gpar_predictions()
+    def _get_all_model_predictions_and_ordering(self):
+        gpar_predictions, gpar_ordering = self._get_gpar_predictions_and_ordering()
         igp_predictions = self._get_igp_predictions()
         self.has_trained_models = True
-        return gpar_predictions, igp_predictions
+        return gpar_predictions, igp_predictions, gpar_ordering
 
-    def _plot_results(self, predictions):
+    def _plot_results(self, predictions, gpar_ordering):
         if not self.has_trained_models:
             raise Exception('Cannot plot results from untrained models')
 
@@ -44,13 +44,15 @@ class ExperimentRunner:
         gpar_means, gpar_vars = gpar_predictions
         igp_means, igp_vars = igp_predictions
 
-        plot_mse_values(gpar_means, igp_means, self.Y_true,
+        plot_mse_values(gpar_means, igp_means, self.Y_true, gpar_ordering,
                         figure_id_start=0, initial_labels=self.labels)
-        plot_all_outputs(gpar_means, gpar_vars, igp_means, igp_vars,
+        plot_all_outputs(gpar_means, gpar_vars, igp_means, igp_vars, gpar_ordering,
                          self.X_new, self.Y_true, self.X_obs, self.Y_obs,
                          figure_id_start=1, initial_labels=self.labels)
         plt.show()
 
     def run(self):
-        predictions = self._get_all_model_predictions()
-        self._plot_results(predictions)
+        gpar_predictions, igp_predictions, gpar_ordering \
+            = self._get_all_model_predictions_and_ordering()
+        predictions = [gpar_predictions, igp_predictions]
+        self._plot_results(predictions, gpar_ordering)

@@ -44,21 +44,26 @@ def plot_truth(X_new, Y_true, out_id):
     plt.plot(X_new, single_Y, label='Truth')
 
 
-def initialize_labels(n, initial_labels):
+def initialize_labels(gpar_ordering, initial_labels):
     if initial_labels is None:
-        return ['Y{}'.format(i + 1) for i in range(n)]
+        return ['Y{}'.format(idx + 1) for idx in gpar_ordering]
     else:
         return initial_labels
 
 
+def configure_plots(idx, figure_id_start):
+    plt.figure(figure_id_start + (idx // NUM_SUBPLOTS))
+    specify_subplot(idx)
+
+
 def plot_all_outputs(model_means, model_vars, igp_means, igp_vars,
-                     X_new, Y_true, X_obs, Y_obs,
+                     gpar_ordering, X_new, Y_true, X_obs, Y_obs,
                      figure_id_start=0, initial_labels=None):
     """Plot all GPAR outputs against: observations, igp, truth."""
-    labels = initialize_labels(Y_true.shape[1], initial_labels)
-    for out_id, label in enumerate(labels):
-        plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
-        specify_subplot(out_id)
+    labels = initialize_labels(gpar_ordering, initial_labels)
+    for idx, label in enumerate(labels):
+        configure_plots(idx, figure_id_start)
+        out_id = gpar_ordering[idx]
         plot_observations(X_obs, Y_obs, out_id)
         plot_single_output(X_new, model_means, model_vars, out_id, 'GPAR', True)
         plot_single_output(X_new, igp_means, igp_vars, out_id, 'IGP', False)
@@ -69,12 +74,12 @@ def plot_all_outputs(model_means, model_vars, igp_means, igp_vars,
         plt.grid(True)
 
 
-def plot_mse_values(model_means, igp_means, Y_true,
+def plot_mse_values(model_means, igp_means, Y_true, gpar_ordering,
                     figure_id_start=0, initial_labels=None):
-    labels = initialize_labels(Y_true.shape[1], initial_labels)
-    for out_id, label in enumerate(labels):
-        plt.figure(figure_id_start + (out_id // NUM_SUBPLOTS))
-        specify_subplot(out_id)
+    labels = initialize_labels(gpar_ordering, initial_labels)
+    for idx, label in enumerate(labels):
+        configure_plots(idx, figure_id_start)
+        out_id = gpar_ordering[idx]
         single_gpar_means = slice_column(model_means, out_id)
         single_igp_means = slice_column(igp_means, out_id)
         true_means = slice_column(Y_true, out_id)
