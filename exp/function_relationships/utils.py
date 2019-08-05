@@ -1,5 +1,5 @@
 import numpy as np
-from evaluation import mse
+from evaluation import smse
 from matplotlib import pyplot as plt
 from src_utils import slice_column
 
@@ -78,7 +78,7 @@ def plot_mse_values(model_means, igp_means, Y_true,
         single_gpar_means = slice_column(model_means, out_id)
         single_igp_means = slice_column(igp_means, out_id)
         true_means = slice_column(Y_true, out_id)
-        gpar_mse = mse(true_means, single_gpar_means)
-        igp_mse = mse(true_means, single_igp_means)
-        plot_bar_plot([gpar_mse, igp_mse], ['GPAR', 'IGP'])
-        plt.title('{} MSE'.format(label))
+        gpar_smse = smse(true_means, single_gpar_means)
+        igp_smse = smse(true_means, single_igp_means)
+        plot_bar_plot([gpar_smse, igp_smse], ['GPAR', 'IGP'])
+        plt.title('{} SMSE'.format(label))

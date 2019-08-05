@@ -1,17 +1,17 @@
 import numpy as np
 from src_utils import slice_column
-from evaluation import mse
+from evaluation import smse
 from regression.gpar_regression import GPARRegression
 from matplotlib import pyplot as plt
 
 
-def get_total_mse(Y_true, model_means):
-    total_mse = 0
+def get_total_smse(Y_true, model_means):
+    total_smse = 0
     for out_id in range(2):
         single_gpar_means = slice_column(model_means, out_id)
         true_means = slice_column(Y_true, out_id)
-        total_mse += mse(true_means, single_gpar_means)
-    return total_mse
+        total_smse += smse(true_means, single_gpar_means)
+    return total_smse
 
 
 def get_total_mse_values_and_ordering_index(X_obs, Y_obs, X_new, Y_true,
@@ -30,7 +30,7 @@ def get_total_mse_values_and_ordering_index(X_obs, Y_obs, X_new, Y_true,
                                     kernel_function, num_restarts=num_restart)
         ordering = gpar_model.get_ordering()
         means, variances = gpar_model.predict(X_new)
-        total_mse_values[idx] = get_total_mse(Y_true, means)
+        total_mse_values[idx] = get_total_smse(Y_true, means)
         if correct_order_index is None and ordering == (1, 2, 3):
             correct_order_index = num_restart
     return total_mse_values, correct_order_index
