@@ -5,11 +5,11 @@ from src_utils import concat_right_column
 
 # ------------------------------ Function Relationships  ------------------------------ #
 
-NOISE_VAR = 0.05
+NOISE_STD = 0.05
 
 
 def eps():
-    return np.random.normal(0, NOISE_VAR)
+    return np.random.normal(0, NOISE_STD)
 
 
 def add_noise(f):
