@@ -1,0 +1,155 @@
+import scipy
+import numpy as np
+import tensorflow as tf
+from exp.freeze_thaw.utils import key_to_hyp, get_block_diag_matrix
+
+
+class ParamAggregator:
+    def __init__(self, loss_count_dict):
+        curve_count = len(loss_count_dict)
+        self.loss_count_dict = loss_count_dict
+        self.global_means = self._initialize_global_means(curve_count)
+        self.global_kernel_param_list = self._initialize_global_param_list()
+        self.local_kernel_param_list = self._initialize_local_param_list(curve_count)
+
+    def get_global_means(self):
+        return self.global_means
+
+    def get_global_kernel_param_list(self):
+        return self.global_kernel_param_list
+
+    def get_local_kernel_param_list(self):
+        # Make sure list is flattened before returning
+        return self._flatten_list(self.local_kernel_param_list)
+
+    def get_O(self):
+        arrays = [np.ones((count, 1)) for count in self.loss_count_dict.values()]
+        O_raw = scipy.linalg.block_diag(*arrays)
+        return tf.convert_to_tensor(O_raw, dtype=float)
+
+    def get_K_t(self):
+        K_t_mats = []
+        for i, count in enumerate(self.loss_count_dict.values()):
+            alpha, beta, diag_noise = self.local_kernel_param_list[i]
+            kernel = self._exp_kernel_generator(alpha, beta)
+            index_mat = tf.reshape(tf.range(1, count + 1, dtype=float), (-1, 1))
+            K_t_mat = self._compute_gram_matrix(kernel, index_mat) \
+                      + tf.eye(count) * (diag_noise + 1e-3)
+            K_t_mats.append(K_t_mat)
+        arr = get_block_diag_matrix(K_t_mats)
+        return arr
+
+    def get_K_x(self):
+        index_matrix = self._get_index_matrix()
+        kernel = self._rbf_kernel_generator(*self.global_kernel_param_list)
+        K_x = self._compute_gram_matrix(kernel, index_matrix)
+        return K_x
+
+    def get_global_posterior(self, y):
+        """Return Gaussian means and variances."""
+        K_x = self.get_K_x()
+        K_t = self.get_K_t()
+        K_t_inv = np.linalg.inv(K_t)
+
+        m = self.get_global_means()
+        O = self.get_O()
+
+        T1 = np.matmul(tf.transpose(O), K_t_inv)
+        t = y - np.matmul(O, m.numpy())
+        L = np.matmul(T1, O)
+        L_inv = np.linalg.inv(L)
+        G = np.matmul(T1, t)
+
+        C_gp = K_x - np.linalg.multi_dot([K_x, np.linalg.inv(K_x + L_inv), K_x])
+        mu_gp = m + np.matmul(C_gp, G)
+
+        return mu_gp, C_gp
+
+    def get_global_posterior_predictive(self, X_s, y):
+        """Return Gaussian means and variances."""
+        kernel = self._rbf_kernel_generator(*self.global_kernel_param_list)
+
+        mu, C = self.get_global_posterior(y)
+        m = self.get_global_means()
+        O = self.get_O()
+        K_t = self.get_K_t()
+        K_t_inv = np.linalg.inv(K_t)
+
+        K_x = self.get_K_x()
+        K_x_inv = self.get_K_x()
+        K_xs = self._compute_gram_matrix(kernel, X_s)
+        K_xs_trans = np.transpose(K_xs)
+        K_xss = self._compute_gram_matrix(kernel, X_s, X_s)
+        L = np.linalg.multi_dot([tf.transpose(O), K_t_inv, O])
+        L_inv = np.linalg.inv(L)
+
+        mu_gpp = m + np.linalg.multi_dot([K_xs_trans, K_x_inv, mu - m])
+        C_gpp = K_xss - np.linalg.multi_dot([K_xs_trans, np.linalg.inv(K_x + L_inv), K_xs])
+
+        return mu_gpp, C_gpp
+
+    def get_local_posterior_predictive(self, key, pred_count, y_n, epoch):
+        """Return Gaussian means and variances."""
+        # Use two schemes depending on if there are existing observations
+        loss_count = self.loss_count_dict[key]
+
+        ones = np.ones((pred_count, 1))
+        x_n = np.arange(1, loss_count + 1).reshape((-1, 1))
+        Omega = ones - np.linalg.multi_dot([])
+
+    def _get_index_matrix(self):
+        """
+        Returns an MxN matrix where each row corresponds
+        to a hyperparam config.
+        """
+        index_rows = self._get_index_rows()
+        index_matrix = np.concatenate(index_rows, axis=0)
+        return tf.convert_to_tensor(index_matrix, dtype=float)
+
+    def _get_index_rows(self):
+        """
+        Returns a list where each element is a 1xN vector
+        corresponding to a hyperparam config.
+        """
+        return [np.array(key_to_hyp(key)).reshape((1, -1))
+                for key in self.loss_count_dict.keys()]
+
+    def _flatten_list(self, arr):
+        # TODO: make this a recursive utils function
+        flattened_list = []
+        for v in arr:
+            flattened_list += v
+        return flattened_list
+
+    def _initialize_global_means(self, curve_count):
+        return tf.Variable(tf.ones((curve_count, 1)))
+
+    def _initialize_global_param_list(self):
+        """For global RBF: vs, ls."""
+        return [tf.Variable(np.random.lognormal()),
+                tf.Variable(np.random.lognormal())]
+
+    def _sample_local_param(self):
+        return [tf.Variable(np.random.lognormal()),
+                tf.Variable(np.random.lognormal()),
+                tf.Variable(np.random.lognormal())]
+
+    def _initialize_local_param_list(self, curve_count):
+        """For each curve: alpha, beta, diagonal_noise."""
+        return [self._sample_local_param() for _ in range(curve_count)]
+
+    def _rbf_kernel_generator(self, vs, ls):
+        return lambda x, y: tf.exp(-tf.exp(vs) / (2. * tf.pow(tf.exp(ls), 2.)) *
+                                   sum(tf.pow(x - y, 2.)))
+
+    def _exp_kernel_generator(self, alpha, beta):
+        return lambda x, y: tf.pow(beta, alpha) / tf.pow(x + y + beta, alpha)
+
+    def _compute_gram_matrix(self, kernel, X1, X2=None):
+        if X2 is None:
+            X2 = X1
+        kern_outputs = []
+        for x in X1:
+            for y in X2:
+                kern_outputs.append(kernel(x, y))
+        return tf.reshape(kern_outputs, (tf.shape(X1)[0], tf.shape(X2)[0]))

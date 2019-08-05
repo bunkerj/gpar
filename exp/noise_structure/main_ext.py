@@ -1,19 +1,19 @@
 import numpy as np
 from synthetic_functions import y_exp2
-from kernels import get_linear_input_dependent_kernel
+from kernels import full_RBF
 from matplotlib import pyplot as plt
 from regression.gpar_regression import GPARRegression
 from src_utils import stack_all_columns
-from utils import get_split_outputs, plot_noise_histogram, \
-    get_igp_output_samples, get_gpar_output_samples
+from exp.noise_structure.utils import get_split_outputs, \
+    plot_noise_histogram, get_igp_output_samples, get_gpar_output_samples
 
 START = 0
 END = 2
 N_OBS = 150
 N_NEW = 100000
-NUM_RESTARTS = 50
+NUM_RESTARTS = 0
 X_VALUES = [0.2, 0.5, 1.7]
-KERNEL_FUNCTION = get_linear_input_dependent_kernel
+KERNEL_FUNCTION = full_RBF
 
 for scheme_idx in [0, 1, 2]:
     # Construct observations
