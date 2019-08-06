@@ -40,18 +40,26 @@ def get_total_smse_values_and_ordering_index(X_obs, Y_obs, X_new, Y_true,
     return total_mse_values
 
 
-def plot_error_vs_restarts():
+def extract_name(filename):
+    filename_no_ext = filename.split('.')[0]
+    characteristics = filename_no_ext.split('_')[1:]
+    return '{}/{} '.format(*characteristics)
+
+
+def plot_error_vs_restarts(n_rows, n_cols):
     with open(NUM_RESTARTS_VALUES_PATH, 'rb') as file:
         num_restarts_values = pickle.load(file)
 
-    for filename in os.listdir(OUTPUTS_PATH):
-        name = filename.split('.')[0]
+    files = sorted(os.listdir(OUTPUTS_PATH))
+
+    for idx, filename in enumerate(files):
+        plt.subplot(n_rows, n_cols, idx + 1)
+        name = extract_name(filename)
         path = os.path.join(OUTPUTS_PATH, filename)
         with open(path, 'rb') as file:
             total_mse_values = pickle.load(file)
-            plt.plot(num_restarts_values, total_mse_values, label=name)
-    plt.title('Error vs Number of Restarts')
-    plt.ylabel('Total SMSE for all outputs')
-    plt.xlabel('Number of Restarts')
-    plt.grid()
-    plt.legend()
+        plt.plot(num_restarts_values, total_mse_values)
+        plt.title(name)
+        plt.ylabel('Total SMSE')
+        plt.xlabel('Number of Restarts')
+        plt.grid()
