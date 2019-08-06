@@ -43,11 +43,11 @@ noisy_synthetic_functions = (
 
 # ------------------------------ Low Complexity ------------------------------ #
 def y1_low(x):
-    return 5 * x + 5
+    return 5 * np.sin(x) + 5
 
 
 def y2_low(x):
-    return 7 * y1_low(x) + 12
+    return 7 * y1_low(x) ** (0.5 * x) + 12
 
 
 low_complexity_functions = (y1_low, y2_low)
