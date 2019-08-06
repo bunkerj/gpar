@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 from kernels import get_full_rbf_kernel, get_non_linear_input_dependent_kernel
 from src_utils import map_and_stack_outputs
-from utils import get_total_smse_values_and_ordering_index
+from utils import get_total_smse_values
 from constants import OUTPUTS_PATH, NUM_RESTARTS_VALUES_PATH
 from synthetic_functions import \
     low_complexity_functions, noisy_low_complexity_functions, \
@@ -38,9 +38,9 @@ for i, key in enumerate(AGGREGATE_FUNCTIONS_DICT.keys()):
     X_new = np.linspace(0, 5, n_new).reshape((n_new, 1))
     Y_true = map_and_stack_outputs(true_functions, X_new)
 
-    num_restarts_values = np.array([1, 5, 10, 15, 20, 25, 30]).reshape((-1, 1))
+    num_restarts_values = np.array([1, 5, 10, 20, 40, 50]).reshape((-1, 1))
 
-    total_mse_values = get_total_smse_values_and_ordering_index(
+    total_mse_values = get_total_smse_values(
         X_obs, Y_obs, X_new, Y_true, kernel,
         num_restarts_values, NUM_AVG_SAMPLES)
 

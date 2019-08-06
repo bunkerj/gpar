@@ -18,10 +18,10 @@ def get_total_smse(Y_true, model_means):
     return total_smse
 
 
-def get_total_smse_values_and_ordering_index(X_obs, Y_obs, X_new, Y_true,
-                                             kernel_function,
-                                             num_restarts_values,
-                                             num_avg_samples):
+def get_total_smse_values(X_obs, Y_obs, X_new, Y_true,
+                          kernel_function,
+                          num_restarts_values,
+                          num_avg_samples):
     """
     Returns:
     - the sum of the MSE of all outputs index by the number of restarts
@@ -43,7 +43,7 @@ def get_total_smse_values_and_ordering_index(X_obs, Y_obs, X_new, Y_true,
 def extract_name(filename):
     filename_no_ext = filename.split('.')[0]
     characteristics = filename_no_ext.split('_')[1:]
-    return '{}/{} '.format(*characteristics)
+    return '{}'.format(characteristics[0].capitalize())
 
 
 def plot_error_vs_restarts(n_rows, n_cols):
