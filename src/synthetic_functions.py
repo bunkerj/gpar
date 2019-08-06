@@ -7,7 +7,7 @@ NOISE_STD = 0.05
 
 
 def get_noisy_functions(functions):
-    return (add_noise(func) for func in functions)
+    return tuple(add_noise(func) for func in functions)
 
 
 # ------------------------------ Function Relationships  ------------------------------ #
