@@ -2,16 +2,16 @@ import os
 import pickle
 import numpy as np
 from kernels import get_full_rbf_kernel
-from utils import get_total_smse_values_and_ordering_index
 from src_utils import map_and_stack_outputs
-from constants import NUM_RESTARTS_VALUES_PATH
+from utils import get_total_smse_values_and_ordering_index
+from constants import OUTPUTS_PATH, NUM_RESTARTS_VALUES_PATH
 from synthetic_functions import \
     low_complexity_functions, noisy_low_complexity_functions, \
     medium_complexity_functions, noisy_medium_complexity_functions, \
     high_complexity_functions, noisy_high_complexity_functions
 
 KERNEL_FUNCTION = get_full_rbf_kernel
-NUM_AVG_SAMPLES = 1
+NUM_AVG_SAMPLES = 20
 
 AGGREGATE_FUNCTIONS_DICT = {
     'low': (low_complexity_functions, noisy_low_complexity_functions),
@@ -21,7 +21,7 @@ AGGREGATE_FUNCTIONS_DICT = {
 
 for key in AGGREGATE_FUNCTIONS_DICT.keys():
     true_functions, noisy_functions = AGGREGATE_FUNCTIONS_DICT[key]
-    filename = 'results/outputs/{}_complexity.pickle'.format(key)
+    filename = '{}{}_complexity.pickle'.format(OUTPUTS_PATH, key)
 
     # Construct synthetic observations
     n = 50
