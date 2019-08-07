@@ -21,6 +21,7 @@ for i in range(DEPTH):
     print_kernel(current_kernels)
     print()
     for kernel in current_kernels:
+        kernel.print()
         raw_kernel = kernel.get_raw_kernel()
         total_log_likelihood = get_total_log_likelihood(X_obs, Y_obs, raw_kernel, N_RESTARTS, N_SAMPLES)
         if (max_log_likelihood is None) or (total_log_likelihood > max_log_likelihood):
