@@ -132,3 +132,9 @@ class GPARRegression(Regression):
     def predict_single_output(self, X_new, out_id):
         m = self.gaussian_process_dict[out_id]
         return m.predict(X_new)
+
+    def get_total_log_likelihood(self):
+        total_log_likelihood = 0
+        for m in self.gaussian_process_dict.values():
+            total_log_likelihood += m.log_likelihood()
+        return total_log_likelihood
