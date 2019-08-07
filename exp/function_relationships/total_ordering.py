@@ -1,5 +1,6 @@
 import numpy as np
 from itertools import permutations
+from matplotlib import pyplot as plt
 from src_utils import map_and_stack_outputs
 from experiment_runner import ExperimentRunner
 from synthetic_functions import synthetic_functions, noisy_synthetic_functions
@@ -26,3 +27,5 @@ for idx, order in enumerate(all_orders):
                            KERNEL_FUNCTION, NUM_RESTARTS,
                            figure_start=2 * idx, manual_ordering=order)
     exp.run()
+
+plt.show()

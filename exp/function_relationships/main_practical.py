@@ -1,5 +1,6 @@
 import GPy
 import numpy as np
+from matplotlib import pyplot as plt
 from experiment_runner import ExperimentRunner
 from utils import get_visible_index_bool
 from data_loader import get_processed_data
@@ -39,3 +40,5 @@ Y_obs = Y_true[visible_index_bool]
 exp = ExperimentRunner(X_obs, Y_obs, X_true, Y_true, KERNEL_FUNCTION,
                        num_restarts=NUM_RESTARTS, labels=labels)
 exp.run()
+
+plt.show()

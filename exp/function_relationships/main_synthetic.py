@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 from src_utils import map_and_stack_outputs
 from experiment_runner import ExperimentRunner
 from kernels import get_non_linear_input_dependent_kernel
@@ -22,3 +23,5 @@ Y_true = map_and_stack_outputs(synthetic_functions, X_new)
 # Run experiment
 exp = ExperimentRunner(X_obs, Y_obs, X_new, Y_true, KERNEL_FUNCTION, NUM_RESTARTS)
 exp.run()
+
+plt.show()

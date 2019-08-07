@@ -55,7 +55,6 @@ class ExperimentRunner:
         plot_all_outputs(gpar_means, gpar_vars, igp_means, igp_vars, gpar_ordering,
                          self.X_new, self.Y_true, self.X_obs, self.Y_obs,
                          figure_id_start=self.figure_start + 1, initial_labels=self.labels)
-        plt.show()
 
     def run(self):
         gpar_predictions, igp_predictions, gpar_ordering \
