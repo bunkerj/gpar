@@ -7,7 +7,8 @@ from utils import plot_mse_values, plot_all_outputs
 class ExperimentRunner:
     def __init__(self, X_obs, Y_obs, X_new, Y_true, kernel_function,
                  num_restarts=10, num_inducing=None,
-                 labels=None, figure_start=0):
+                 labels=None, figure_start=0,
+                 manual_ordering=None):
         self.X_obs = X_obs
         self.Y_obs = Y_obs
         self.X_new = X_new
@@ -18,14 +19,17 @@ class ExperimentRunner:
         self.labels = labels
         self.has_trained_models = False
         self.figure_start = figure_start
+        self.manual_ordering = manual_ordering
 
-    def _get_model(self, model_class):
+    def _get_model(self, model_class, **kwargs):
         return model_class(self.X_obs, self.Y_obs, self.kernel_function,
                            num_restarts=self.num_restarts,
-                           num_inducing=self.num_inducing)
+                           num_inducing=self.num_inducing,
+                           **kwargs)
 
     def _get_gpar_predictions_and_ordering(self):
-        model = self._get_model(GPARRegression)
+        model = self._get_model(GPARRegression,
+                                manual_ordering=self.manual_ordering)
         return model.predict(self.X_new), model.get_ordering()
 
     def _get_igp_predictions(self):
