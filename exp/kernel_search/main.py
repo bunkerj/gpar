@@ -48,7 +48,7 @@ exp_regular.run()
 
 # --------------------------- Print and Save Relevant Data --------------------------- #
 
-with open('results/likelihood_data', 'wb') as file:
+with open('results/likelihood_data.pickle', 'wb') as file:
     pickle.dump(likelihood_data, file)
 
 m = GPARRegression(X_obs, Y_obs, get_non_linear_input_dependent_kernel, num_restarts=N_RESTARTS)
