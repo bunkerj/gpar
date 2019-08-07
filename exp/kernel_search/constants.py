@@ -1,5 +1,7 @@
 import GPy
 
+DATA_PATH = 'results/likelihood_data.pickle'
+
 KERNEL_ADD = '+'
 KERNEL_MULTIPLY = '*'
 

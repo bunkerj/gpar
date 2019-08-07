@@ -5,10 +5,11 @@ from exp.function_relationships.experiment_runner import ExperimentRunner
 from kernels import get_non_linear_input_dependent_kernel
 from matplotlib import pyplot as plt
 from src.regression.gpar_regression import GPARRegression
+from exp.kernel_search.constants import DATA_PATH
 
 DEPTH = 1
 N_SAMPLES = 1
-N_RESTARTS = 1
+N_RESTARTS = 10
 
 X_obs, Y_obs, X_new, Y_true = generate_data()
 
@@ -26,7 +27,8 @@ for i in range(DEPTH):
     for kernel in current_kernels:
         kernel.print()
         raw_kernel = kernel.get_raw_kernel()
-        total_log_likelihood = get_total_log_likelihood(X_obs, Y_obs, raw_kernel, N_RESTARTS, N_SAMPLES)
+        total_log_likelihood = get_total_log_likelihood(X_obs, Y_obs, raw_kernel,
+                                                        N_RESTARTS, N_SAMPLES)
         likelihood_data[kernel.get_kernel_string()] = total_log_likelihood
         if (max_log_likelihood is None) or (total_log_likelihood > max_log_likelihood):
             max_log_likelihood = total_log_likelihood
@@ -48,7 +50,7 @@ exp_regular.run()
 
 # --------------------------- Print and Save Relevant Data --------------------------- #
 
-with open('results/likelihood_data.pickle', 'wb') as file:
+with open(DATA_PATH, 'wb') as file:
     pickle.dump(likelihood_data, file)
 
 m = GPARRegression(X_obs, Y_obs, get_non_linear_input_dependent_kernel, num_restarts=N_RESTARTS)

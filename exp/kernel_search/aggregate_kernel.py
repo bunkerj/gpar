@@ -59,16 +59,5 @@ class AggregateKernel():
     def get_kernel_string(self):
         return self.kernel_string
 
-    # def get_linear_input_dependent_kernel(self, original_X, current_X):
-    #     X_dim = original_X.shape[1]
-    #     Y_dim = current_X.shape[1] - X_dim
-    #     k1 = GPy.kern.RBF(input_dim=X_dim, active_dims=list(range(X_dim)))
-    #     if Y_dim > 0:
-    #         k2 = GPy.kern.RatQuad(input_dim=X_dim, active_dims=list(range(X_dim)))
-    #         k_linear = GPy.kern.Linear(input_dim=Y_dim,
-    #                                    active_dims=list(range(X_dim, X_dim + Y_dim)))
-    #         return k1 + k2 * k_linear
-    #     return k1
-
     def print(self):
         print(self.kernel_string)
