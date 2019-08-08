@@ -175,9 +175,9 @@ struve_functions = (
 
 
 gaussian_functions = (
-    lambda x: stats.norm.pdf(x, 0, 1),
-    lambda x: stats.norm.pdf(x, 0, 1),
-    lambda x: stats.norm.pdf(x, 0, 1))
+    lambda x: stats.norm.pdf(x, 1, np.sqrt(2)),
+    lambda x: stats.norm.pdf(x, -3, np.sqrt(1)),
+    lambda x: stats.norm.pdf(x, 0, np.sqrt(4)))
 
 custom_functions = (
     lambda x: 3 * x + x ** 0.5 + np.sin(10 * x) + 5,
