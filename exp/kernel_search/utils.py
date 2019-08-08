@@ -1,6 +1,7 @@
 from exp.kernel_search.aggregate_kernel import AggregateKernel
 from src.regression.gpar_regression import GPARRegression
 from exp.kernel_search.constants import BASE_KERNEL_CONFIGS, INITIAL_BASE_KERNEL_CONFIGS
+from src.src_utils import repeat_until_success
 
 
 def enhance_kernel(new_kernels, current_original_kernel, config_list):
@@ -25,14 +26,6 @@ def generate_kernels(current_kernels):
         for current_original_kernel in current_kernels:
             enhance_kernel(new_kernels, current_original_kernel, BASE_KERNEL_CONFIGS)
     return new_kernels
-
-
-def repeat_until_success(custom_func):
-    try:
-        return custom_func()
-    except:
-        print('<--- Failed --->')
-        return repeat_until_success(custom_func)
 
 
 def get_total_log_likelihood(X_obs, Y_obs, kernel, n_restarts, n_samples):

@@ -41,3 +41,11 @@ def map_and_stack_outputs(funcs, X):
         single_Y = map_to_col_vector(f, X)
         Y = single_Y if Y is None else concat_right_column(Y, single_Y)
     return Y
+
+
+def repeat_until_success(custom_func):
+    try:
+        return custom_func()
+    except:
+        print('<--- Failed --->')
+        return repeat_until_success(custom_func)
