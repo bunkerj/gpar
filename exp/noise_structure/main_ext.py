@@ -1,9 +1,9 @@
 import numpy as np
-from synthetic_functions import y_exp2
-from kernels import full_RBF
+from src.synthetic_functions import y_exp2
+from src.kernels import full_RBF
 from matplotlib import pyplot as plt
-from regression.gpar_regression import GPARRegression
-from src_utils import stack_all_columns
+from src.regression.gpar_regression import GPARRegression
+from src.src_utils import stack_all_columns
 from exp.noise_structure.utils import get_split_outputs, \
     plot_noise_histogram, get_igp_output_samples, get_gpar_output_samples
 

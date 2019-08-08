@@ -1,9 +1,9 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from synthetic_functions import y_exp2
-from kernels import get_non_linear_input_dependent_kernel
-from regression.gpar_regression import GPARRegression
-from regression.igp_regression import IGPRegression
+from src.synthetic_functions import y_exp2
+from src.kernels import get_non_linear_input_dependent_kernel
+from src.regression.gpar_regression import GPARRegression
+from src.regression.igp_regression import IGPRegression
 from exp.noise_structure.utils import plot_noise, \
     get_split_outputs, get_prediction_noise
 

@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
-from optimizer import Optimizer
+from src.optimizer import Optimizer
 from matplotlib import pyplot as plt
-from src_utils import get_bounded_samples
+from src.src_utils import get_bounded_samples
 from exp.freeze_thaw.aggregators.model_aggregator import ModelAggregator
 from exp.freeze_thaw.aggregators.param_aggregator import ParamAggregator
 

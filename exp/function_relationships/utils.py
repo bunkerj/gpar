@@ -1,7 +1,7 @@
 import numpy as np
-from evaluation import smse
+from src.evaluation import smse
 from matplotlib import pyplot as plt
-from src_utils import slice_column
+from src.src_utils import slice_column
 
 
 def get_num_subplots(plot_shape):

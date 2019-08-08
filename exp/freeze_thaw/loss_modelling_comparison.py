@@ -1,8 +1,8 @@
 import numpy as np
 from exp.freeze_thaw.aggregators.model_aggregator import ModelAggregator
 from exp.function_relationships.experiment_runner import ExperimentRunner
-from kernels import get_exponential_decay_kernel
-from src_utils import sample_from_bounds, stack_all_columns
+from src.kernels import get_exponential_decay_kernel
+from src.src_utils import sample_from_bounds, stack_all_columns
 
 N_MODELS = 6
 N_EPOCHS = 30

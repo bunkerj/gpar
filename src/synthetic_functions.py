@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import sin, cos, pi, exp, sqrt
 from scipy import stats, special
-from src_utils import concat_right_column
+from src.src_utils import concat_right_column
 
 # ------------------------------ Function Relationships  ------------------------------ #
 

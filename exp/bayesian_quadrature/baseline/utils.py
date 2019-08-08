@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.stats as stats
 from matplotlib import pyplot as plt
-from src_utils import slice_column
+from src.src_utils import slice_column
 
 
 def slice_if_needed(data, out_idx):

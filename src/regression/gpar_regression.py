@@ -1,6 +1,6 @@
 import gpflow
-from regression.regression import Regression
-from src_utils import should_update_max, slice_column, concat_right_column
+from src.regression.regression import Regression
+from src.src_utils import should_update_max, slice_column, concat_right_column
 
 
 class GPARRegression(Regression):

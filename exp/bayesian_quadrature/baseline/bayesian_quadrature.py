@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.integrate as integrate
-from src_utils import stack_all_columns, sample_from_bounds
+from src.src_utils import stack_all_columns, sample_from_bounds
 
 
 class BayesianQuadrature:

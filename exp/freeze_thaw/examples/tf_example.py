@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from optimizer import Optimizer
+from src.optimizer import Optimizer
 
 tf.enable_eager_execution()
 
