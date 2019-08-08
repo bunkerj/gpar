@@ -5,7 +5,7 @@ from exp.likelihood_std.constants import DATA_PATH
 from src.regression.gpar_regression import GPARRegression
 from src.kernels import get_non_linear_input_dependent_kernel
 
-N_SAMPLES = 25
+N_SAMPLES = 15
 KERNEL = get_non_linear_input_dependent_kernel
 
 X_obs, Y_obs, X_new, Y_true = generate_base_data()
