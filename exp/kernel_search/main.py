@@ -7,9 +7,9 @@ from matplotlib import pyplot as plt
 from src.regression.gpar_regression import GPARRegression
 from exp.kernel_search.constants import DATA_PATH
 
-DEPTH = 1
-N_SAMPLES = 1
-N_RESTARTS = 10
+DEPTH = 2
+N_SAMPLES = 5
+N_RESTARTS = 100
 
 X_obs, Y_obs, X_new, Y_true = generate_data()
 
