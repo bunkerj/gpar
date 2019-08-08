@@ -3,7 +3,7 @@ from src.data_source import generate_base_data
 from src.src_utils import repeat_until_success
 from exp.likelihood_std.constants import DATA_PATH
 from src.regression.gpar_regression import GPARRegression
-from kernels import get_non_linear_input_dependent_kernel
+from src.kernels import get_non_linear_input_dependent_kernel
 
 N_SAMPLES = 25
 KERNEL = get_non_linear_input_dependent_kernel

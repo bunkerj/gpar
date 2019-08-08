@@ -1,6 +1,5 @@
-from matplotlib import pyplot as plt
-from regression.gpar_regression import GPARRegression
-from regression.igp_regression import IGPRegression
+from src.regression.gpar_regression import GPARRegression
+from src.regression.igp_regression import IGPRegression
 from exp.function_relationships.utils import plot_mse_values, plot_all_outputs
 
 

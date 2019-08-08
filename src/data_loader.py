@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-from src_utils import stack_all_columns
+from src.src_utils import stack_all_columns
 
 DATA_DIR_PATH = os.path.abspath(os.path.join(__file__, '../../data'))
 

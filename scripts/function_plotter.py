@@ -1,7 +1,7 @@
 import numpy as np
-from kernels import get_non_linear_input_dependent_kernel
-from src_utils import map_and_stack_outputs, slice_column
-from synthetic_functions import synthetic_functions
+from src.kernels import get_non_linear_input_dependent_kernel
+from src.src_utils import map_and_stack_outputs, slice_column
+from src.synthetic_functions import synthetic_functions
 from matplotlib import pyplot as plt
 
 KERNEL_FUNCTION = get_non_linear_input_dependent_kernel

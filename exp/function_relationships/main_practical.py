@@ -1,9 +1,9 @@
 import GPy
 import numpy as np
 from matplotlib import pyplot as plt
-from experiment_runner import ExperimentRunner
-from utils import get_visible_index_bool
-from data_loader import get_processed_data
+from exp.function_relationships.experiment_runner import ExperimentRunner
+from exp.function_relationships.utils import get_visible_index_bool
+from src.data_loader import get_processed_data
 
 np.random.seed(17)
 

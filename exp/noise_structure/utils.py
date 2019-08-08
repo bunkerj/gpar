@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from regression.igp_regression import IGPRegression
-from src_utils import slice_column, concat_right_column, stack_all_columns
+from src.regression.igp_regression import IGPRegression
+from src.src_utils import slice_column, concat_right_column, stack_all_columns
 
 
 def plot_noise(figure_id_start, X, noise, title):

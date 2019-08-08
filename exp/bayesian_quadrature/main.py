@@ -2,12 +2,12 @@ import GPy
 import numpy as np
 import scipy.integrate as integrate
 from matplotlib import pyplot as plt
-from regression.gpar_regression import GPARRegression
-from regression.igp_regression import IGPRegression
-from synthetic_functions import gaussian_functions
-from src_utils import map_and_stack_outputs, slice_column
-from bayesian_quadrature import BayesianQuadrature
-from utils import plot_bq_integral_gp_dist, \
+from src.regression.gpar_regression import GPARRegression
+from src.regression.igp_regression import IGPRegression
+from src.synthetic_functions import gaussian_functions
+from src.src_utils import map_and_stack_outputs, slice_column
+from exp.bayesian_quadrature.bayesian_quadrature import BayesianQuadrature
+from exp.bayesian_quadrature.utils import plot_bq_integral_gp_dist, \
     plot_bq_integrand_gp, plot_bq_integrand_truth
 
 np.random.seed(17)

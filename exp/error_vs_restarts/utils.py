@@ -1,10 +1,10 @@
 import os
 import pickle
 import numpy as np
-from src_utils import slice_column
-from evaluation import smse
-from constants import NUM_RESTARTS_VALUES_PATH, OUTPUTS_PATH
-from regression.gpar_regression import GPARRegression
+from src.src_utils import slice_column
+from src.evaluation import smse
+from exp.error_vs_restarts.constants import NUM_RESTARTS_VALUES_PATH, OUTPUTS_PATH
+from src.regression.gpar_regression import GPARRegression
 from matplotlib import pyplot as plt
 
 

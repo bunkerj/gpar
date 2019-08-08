@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import stats, special
 from numpy import sin, cos, pi, exp, sqrt
-from src_utils import concat_right_column
+from src.src_utils import concat_right_column
 
 NOISE_STD = 0.05
 

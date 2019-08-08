@@ -1,9 +1,9 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from src_utils import map_and_stack_outputs
-from experiment_runner import ExperimentRunner
-from kernels import get_non_linear_input_dependent_kernel
-from synthetic_functions import synthetic_functions, noisy_synthetic_functions
+from src.src_utils import map_and_stack_outputs
+from exp.function_relationships.experiment_runner import ExperimentRunner
+from src.kernels import get_non_linear_input_dependent_kernel
+from src.synthetic_functions import synthetic_functions, noisy_synthetic_functions
 
 np.random.seed(17)
 

@@ -1,6 +1,6 @@
 import numpy as np
-from src_utils import map_and_stack_outputs
-from synthetic_functions import synthetic_functions, noisy_synthetic_functions
+from src.src_utils import map_and_stack_outputs
+from src.synthetic_functions import synthetic_functions, noisy_synthetic_functions
 
 
 def generate_base_data():

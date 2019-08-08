@@ -1,11 +1,11 @@
 import os
 import pickle
 import numpy as np
-from kernels import get_full_rbf_kernel, get_non_linear_input_dependent_kernel
-from src_utils import map_and_stack_outputs
-from utils import get_total_smse_values
-from constants import OUTPUTS_PATH, NUM_RESTARTS_VALUES_PATH
-from synthetic_functions import \
+from src.kernels import get_full_rbf_kernel, get_non_linear_input_dependent_kernel
+from src.src_utils import map_and_stack_outputs
+from exp.error_vs_restarts.utils import get_total_smse_values
+from exp.error_vs_restarts.constants import OUTPUTS_PATH, NUM_RESTARTS_VALUES_PATH
+from src.synthetic_functions import \
     low_complexity_functions, noisy_low_complexity_functions, \
     medium_complexity_functions, noisy_medium_complexity_functions, \
     high_complexity_functions, noisy_high_complexity_functions

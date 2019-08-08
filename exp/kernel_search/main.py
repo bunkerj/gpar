@@ -1,8 +1,8 @@
 import pickle
-from data_source import generate_base_data
+from src.data_source import generate_base_data
 from exp.kernel_search.utils import generate_kernels, get_total_log_likelihood, print_kernel
 from exp.function_relationships.experiment_runner import ExperimentRunner
-from kernels import get_non_linear_input_dependent_kernel
+from src.kernels import get_non_linear_input_dependent_kernel
 from matplotlib import pyplot as plt
 from src.regression.gpar_regression import GPARRegression
 from exp.kernel_search.constants import DATA_PATH
