@@ -3,7 +3,7 @@ from src_utils import map_and_stack_outputs
 from synthetic_functions import synthetic_functions, noisy_synthetic_functions
 
 
-def generate_data():
+def generate_base_data():
     # Construct synthetic observations
     n_obs = 50
     X_obs = np.linspace(0, 1, n_obs).reshape((n_obs, 1))
