@@ -27,10 +27,20 @@ def generate_kernels(current_kernels):
     return new_kernels
 
 
+def repeat_until_success(custom_func):
+    try:
+        return custom_func()
+    except:
+        print('<--- Failed --->')
+        return repeat_until_success(custom_func)
+
+
 def get_total_log_likelihood(X_obs, Y_obs, kernel, n_restarts, n_samples):
     total_log_likelihood = 0
     for j in range(n_samples):
-        m = GPARRegression(X_obs, Y_obs, kernel, num_restarts=n_restarts)
+        train_model = lambda: GPARRegression(X_obs, Y_obs, kernel,
+                                             num_restarts=n_restarts)
+        m = repeat_until_success(train_model)
         total_log_likelihood += m.get_total_log_likelihood() / n_samples
     return total_log_likelihood
 
