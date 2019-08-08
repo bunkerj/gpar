@@ -9,7 +9,6 @@ BASE_KERNELS = (
     GPy.kern.RBF,
     GPy.kern.RatQuad,
     GPy.kern.Linear,
-    GPy.kern.Matern32,
     GPy.kern.Matern52,
 )
 

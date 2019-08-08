@@ -8,7 +8,7 @@ from src.regression.gpar_regression import GPARRegression
 from exp.kernel_search.constants import DATA_PATH
 
 DEPTH = 2
-N_SAMPLES = 5
+N_SAMPLES = 4
 N_RESTARTS = 100
 
 X_obs, Y_obs, X_new, Y_true = generate_base_data()
