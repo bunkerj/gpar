@@ -22,11 +22,11 @@ class DerivativeKernel(ABC, gpflow.kernels.Kernel):
     def _compute_gram_matrix(self, X1, X2, kernel):
         if X2 is None:
             X2 = X1
-        base_mat = tf.cast(0 * tf.add(X1, tf.transpose(X2)), float)
+        base_mat = tf.cast(0 * tf.add(X1, tf.transpose(X2)), tf.float64)
         input1_mat = base_mat + X1
         input2_mat = base_mat + tf.transpose(X2)
         return tf.map_fn(lambda x: kernel(x[0], x[1]),
-                         (input1_mat, input2_mat), dtype=float)
+                         (input1_mat, input2_mat), dtype=tf.float64)
 
     @params_as_tensors
     def K(self, X1, X2=None):
