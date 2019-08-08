@@ -1,5 +1,5 @@
 import pickle
-from exp.kernel_search.data_source import generate_data
+from data_source import generate_base_data
 from exp.kernel_search.utils import generate_kernels, get_total_log_likelihood, print_kernel
 from exp.function_relationships.experiment_runner import ExperimentRunner
 from kernels import get_non_linear_input_dependent_kernel
@@ -11,7 +11,7 @@ DEPTH = 2
 N_SAMPLES = 5
 N_RESTARTS = 100
 
-X_obs, Y_obs, X_new, Y_true = generate_data()
+X_obs, Y_obs, X_new, Y_true = generate_base_data()
 
 max_log_likelihood = None
 best_kernel = None
