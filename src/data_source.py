@@ -5,7 +5,7 @@ from src.synthetic_functions import synthetic_functions, noisy_synthetic_functio
 
 def generate_base_data():
     # Construct synthetic observations
-    n_obs = 50
+    n_obs = 35
     X_obs = np.linspace(0, 1, n_obs).reshape((n_obs, 1))
     Y_obs = map_and_stack_outputs(noisy_synthetic_functions, X_obs)
 
