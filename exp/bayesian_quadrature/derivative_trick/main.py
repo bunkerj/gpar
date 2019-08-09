@@ -59,7 +59,7 @@ plot_gp_vs_truth(X_true, Y_int_true, None, None, X_test_int,
                  integral_means, integral_vars_diag, 'Integral Fit')
 
 plt.subplot(1, 3, 3)
-X_test_int_single = np.array([START, X_TEST_SINGLE]).reshape((-1, 1))
+X_test_int_single = np.array([START, X_TEST_SINGLE], dtype=float).reshape((-1, 1))
 integral_truth_single = integrate.quad(f, START, X_TEST_SINGLE)[0]
 integral_means_single, integral_vars_single = predict_integral(m, X_test_int_single, X_obs, Y_obs)
 approx_int_means_single = float(integral_means_single[1])
