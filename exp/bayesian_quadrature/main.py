@@ -2,19 +2,18 @@ import GPy
 import numpy as np
 import scipy.integrate as integrate
 from matplotlib import pyplot as plt
+from src.kernels import get_full_rbf_kernel
 from src.regression.gpar_regression import GPARRegression
 from src.regression.igp_regression import IGPRegression
-from src.synthetic_functions import gaussian_functions
+from src.synthetic_functions import bessel_functions, gaussian_functions
 from src.src_utils import map_and_stack_outputs, slice_column
 from exp.bayesian_quadrature.bayesian_quadrature import BayesianQuadrature
 from exp.bayesian_quadrature.utils import plot_bq_integral_gp_dist, \
     plot_bq_integrand_gp, plot_bq_integrand_truth
 
-np.random.seed(17)
-
-NUM_RESTARTS = 30
-KERNEL_FUNCTION = lambda x, y: GPy.kern.RBF(1)
-START = -5
+NUM_RESTARTS = 1000
+KERNEL_FUNCTION = get_full_rbf_kernel
+START = -8
 END = 0.5
 N_OBS = 50
 TITLE = 'Number of Observations: {}'.format(N_OBS)
