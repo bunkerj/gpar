@@ -3,14 +3,14 @@ from src.data_source import generate_base_data
 from src.src_utils import repeat_until_success
 from exp.likelihood_std.constants import DATA_PATH
 from src.regression.gpar_regression import GPARRegression
-from src.kernels import get_non_linear_input_dependent_kernel
+from src.kernels import get_non_linear_input_dependent_kernel, get_full_rbf_kernel
 
-N_SAMPLES = 15
-KERNEL = get_non_linear_input_dependent_kernel
+N_SAMPLES = 20
+KERNEL = get_full_rbf_kernel
 
 X_obs, Y_obs, X_new, Y_true = generate_base_data()
 
-n_restarts_list = [1, 20, 40, 60, 80, 100]
+n_restarts_list = [1, 10, 20, 40, 60, 80, 100]
 
 data_dict = {}
 
