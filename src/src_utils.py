@@ -41,6 +41,15 @@ def map_and_stack_outputs(funcs, X):
     return Y
 
 
+def sample_from_bounds(bounds_list):
+    sample = []
+    for bounds in bounds_list:
+        high = bounds[1]
+        low = bounds[0]
+        sample.append(np.random.uniform(low, high))
+    return tuple(sample)
+
+
 def repeat_until_success(custom_func):
     try:
         return custom_func()
