@@ -7,7 +7,7 @@ from src.src_utils import sample_from_bounds, stack_all_columns
 N_MODELS = 6
 N_EPOCHS = 30
 N_OBS = 20
-NUM_RESTARTS = 35
+NUM_RESTARTS = 0
 KERNEL_FUNCTION = get_exponential_decay_kernel
 PLOT_SHAPE = (2, 3)
 
