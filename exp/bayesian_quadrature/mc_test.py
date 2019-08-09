@@ -8,8 +8,9 @@ from src.synthetic_functions import bessel_functions, gaussian_functions
 from src.src_utils import map_and_stack_outputs, slice_column
 from exp.bayesian_quadrature.bayesian_quadrature import BayesianQuadrature
 
-NAME = 'k4_5.pickle'
-N_OBS = 5
+ROOT_NAME = 'k4'
+N_OBS = 50
+FULL_NAME = '{}_{}.pickle'.format(ROOT_NAME, N_OBS)
 NUM_RESTARTS = 100
 KERNEL_FUNCTION = get_full_rbf_kernel
 START = 0
@@ -55,7 +56,7 @@ for n_samples in N_SAMPLES_LIST:
 print(means)
 print(stds)
 
-with open(RESULTS_DIR + NAME, 'wb') as file:
+with open(RESULTS_DIR + FULL_NAME, 'wb') as file:
     results = {
         'index': N_SAMPLES_LIST,
         'means': means,
