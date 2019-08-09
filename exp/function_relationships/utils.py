@@ -68,8 +68,8 @@ def plot_all_outputs(model_means, model_vars, igp_means, igp_vars,
         plot_single_output(X_new, model_means, model_vars, out_id, 'GPAR', True)
         plot_single_output(X_new, igp_means, igp_vars, out_id, 'IGP', False)
         plot_truth(X_new, Y_true, out_id)
-        if (out_id + 1) % NUM_SUBPLOTS == 0:
-            plt.legend(loc='upper left')
+        if (idx + 1) % NUM_SUBPLOTS == 0:
+            plt.legend(loc='upper right')
         plt.title('{}'.format(label))
         plt.grid(True)
 
