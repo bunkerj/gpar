@@ -3,18 +3,18 @@ import numpy as np
 import scipy.integrate as integrate
 from src.kernels import get_full_rbf_kernel
 from src.regression.igp_regression import IGPRegression
-from exp.bayesian_quadrature.constants import RESULTS_DIR, INDEX_PATH
+from exp.bayesian_quadrature.constants import RESULTS_DIR
 from src.synthetic_functions import bessel_functions, gaussian_functions
 from src.src_utils import map_and_stack_outputs, slice_column
 from exp.bayesian_quadrature.bayesian_quadrature import BayesianQuadrature
 
-NAME = 'k1.pickle'
+NAME = 'k4_5.pickle'
+N_OBS = 5
 NUM_RESTARTS = 100
 KERNEL_FUNCTION = get_full_rbf_kernel
-START = -8
-END = 0.5
-N_OBS = 30
-FUNCTIONS = gaussian_functions
+START = 0
+END = 40
+FUNCTIONS = bessel_functions
 
 N_PLOT_ROWS = 3
 N_PLOT_COLS = 3
@@ -49,14 +49,16 @@ for n_samples in N_SAMPLES_LIST:
     integral_bq_igp, integral_std_bq_igp = \
         igp_bq.predict(igp_gps[0], X_obs, y_single_obs, START, END)
 
-    means.append(integral_bq_igp)
-    stds.append(integral_std_bq_igp)
+    means.append(float(integral_bq_igp))
+    stds.append(float(integral_std_bq_igp))
 
 print(means)
 print(stds)
 
 with open(RESULTS_DIR + NAME, 'wb') as file:
-    pickle.dump(means, file)
-
-with open(INDEX_PATH, 'wb') as file:
-    pickle.dump(N_SAMPLES_LIST, file)
+    results = {
+        'index': N_SAMPLES_LIST,
+        'means': means,
+        'truth': float(integral_base),
+    }
+    pickle.dump(results, file)
