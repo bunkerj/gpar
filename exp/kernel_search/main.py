@@ -9,7 +9,7 @@ from exp.kernel_search.constants import DATA_PATH
 
 DEPTH = 2
 N_SAMPLES = 1
-N_RESTARTS = 100
+N_RESTARTS = 50
 
 X_obs, Y_obs, X_new, Y_true = generate_base_data()
 
