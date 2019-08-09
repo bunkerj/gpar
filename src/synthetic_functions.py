@@ -160,19 +160,13 @@ bessel_integrands = (
 
 bessel_functions = (
     lambda x: special.jv(0, x),
-    lambda x: special.jv(1, x),
-    lambda x: special.jv(2, x))
+    lambda x: special.jv(0, x) + special.jv(1, x),
+    lambda x: special.jv(0, x) + special.jv(1, x) + special.jv(2, x))
 
 struve_functions = (
     lambda x: special.struve(0, x),
     lambda x: special.struve(1, x),
     lambda x: special.struve(2, x))
-
-# gaussian_functions = (
-#     lambda x: stats.norm.pdf(x, 0, 1),
-#     lambda x: stats.norm.pdf(x, 0, 2),
-#     lambda x: stats.norm.pdf(x, 0, 4))
-
 
 gaussian_functions = (
     lambda x: stats.norm.pdf(x, 1, np.sqrt(2)),
@@ -180,7 +174,7 @@ gaussian_functions = (
     lambda x: stats.norm.pdf(x, 0, np.sqrt(4)))
 
 custom_functions = (
-    lambda x: 3 * x + x ** 0.5 + np.sin(10 * x) + 5,
-    lambda x: 3 * x + np.sin(10 * x) + 5,
-    lambda x: x ** 0.5 + np.cos(10 * x) + 10
+    lambda x: x ** 0.5 + np.sin(x) + 5,
+    lambda x: 0.5 * x + np.sin(x) + 5,
+    lambda x: np.cos(x) ** 2 + np.sin(x)
 )
