@@ -1,6 +1,8 @@
 import numpy as np
 import tensorflow as tf
 
+np.random.seed(16)
+
 
 def hyp_to_key(hyp):
     return '_'.join(str(v) for v in hyp)
