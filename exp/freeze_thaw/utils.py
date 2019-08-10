@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 
 
@@ -30,3 +31,15 @@ def get_block_diag_matrix(matrix_list):
         else:
             current_matrix = tf.concat([current_matrix, sub_matrix], axis=0)
     return current_matrix
+
+
+def get_observations_from_truth(losses):
+    obs = {}
+    for key in losses:
+        n_rem = np.random.randint(1, len(losses[key]))
+        obs[key] = losses[key][:-n_rem].copy()
+    return obs
+
+
+def get_index_values(n):
+    return np.arange(1, n + 1).reshape((-1, 1)).astype(float)
