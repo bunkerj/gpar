@@ -20,6 +20,8 @@ print(sorted_data)
 plt.barh(list(sorted_data.keys()),
          list(sorted_data.values()),
          align='center')
+plt.barh(['( RBF ) + RatQuad_'],
+         [likelihood_data['( RBF ) + RatQuad_']], color='r')
 plt.title('Kernel Log-likelihoods for Kernel Search')
 plt.xlabel('Log-likelihood')
 plt.grid(axis='x')
