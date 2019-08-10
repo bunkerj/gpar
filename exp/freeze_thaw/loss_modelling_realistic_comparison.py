@@ -42,15 +42,16 @@ for idx, loss_key in enumerate(Y_obs):
     obs_loss = Y_obs[loss_key]
     true_loss = losses[loss_key]
     x_obs_base = get_index_values(len(obs_loss))
-    x_obs_gpar = x_full_gpar[:len(obs_loss), :]
+    x_obs_gpar = x_full_gpar[:len(obs_loss), :].copy()
 
     # Train GPs
     m_igp = get_trained_gp_model(x_obs_base, x_obs_base, obs_loss)
     m_gpar = get_trained_gp_model(x_obs_base, x_obs_gpar, obs_loss)
+    print(m_gpar.compute_log_likelihood())
 
     # Get Predictions
     pred_igp = m_igp.predict_f(X_true)[0]
-    pred_gpar = m_gpar.predict_f(X_true)[0]
+    pred_gpar = m_gpar.predict_f(x_full_gpar)[0]
 
     # Get Error Predictions
     smse_igp = smse(true_loss, pred_igp)
@@ -71,7 +72,7 @@ for idx, loss_key in enumerate(Y_obs):
     plt.grid()
 
     if idx + 1 == 6:
-        plt.legend(loc='upper left')
+        plt.legend(loc='upper right')
 
     # plot error estimation
     plt.figure(1)
