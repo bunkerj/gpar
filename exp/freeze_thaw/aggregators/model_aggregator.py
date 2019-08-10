@@ -1,7 +1,7 @@
+import pickle
 import numpy as np
 import tensorflow as tf
 from exp.freeze_thaw.utils import hyp_to_key
-import pickle
 
 
 class ModelAggregator:
@@ -80,6 +80,9 @@ class ModelAggregator:
     def _construct_model(self, num_layers, width):
         components = [tf.keras.layers.Flatten(input_shape=(28, 28))]
         for i in range(num_layers):
-            components.append(tf.keras.layers.Dense(width, activation=tf.nn.relu))
+            components.append(
+                tf.keras.layers.Dense(width,
+                                      activation=tf.nn.relu,
+                                      kernel_regularizer=tf.keras.regularizers.l2(0.01)))
         components.append(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
         return tf.keras.Sequential(components)
