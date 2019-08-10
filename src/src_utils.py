@@ -52,3 +52,11 @@ def sample_from_bounds(bounds_list):
 
 def get_bounded_samples(hyp_bounds_list, n_samples):
     return [sample_from_bounds(hyp_bounds_list) for _ in range(n_samples)]
+
+
+def sort_by_value_len(dictionnary):
+    """In descending order."""
+    return {k: v for k, v in
+            sorted(dictionnary.items(),
+                   key=lambda x: len(x[1]),
+                   reverse=True)}
